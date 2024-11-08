@@ -29,7 +29,6 @@ This repository contains a Django-based authentication service that integrates w
 ## Installation
 
 1. **Clone the repository:**
-
    ```bash
    git clone https://github.com/yourusername/your-repo-name.git
    cd your-repo-name
@@ -106,7 +105,6 @@ python manage.py runserver
   - Method: POST
   - Request Body:
     ```json
-    Copy code
     {
         "user_name": "your_user_name",
         "verification_code": "your_verification_code"
@@ -118,7 +116,6 @@ python manage.py runserver
   - Method: POST
   - Request Body:
     ```json
-    Copy code
     {
         "refresh_token": "your_refresh_token"
     }
