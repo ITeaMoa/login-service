@@ -35,15 +35,15 @@ This repository contains a Django-based authentication service that integrates w
    ```
 
 2. **Create a virtual environment:**
-  ```bash
-  python -m venv venv
-  source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-  ```
+     ```bash
+     python -m venv venv
+     source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+     ```
   
 3. **Install the required packages:**
-  ```bash
-  pip install -r requirements.txt
-  ```
+     ```bash
+     pip install -r requirements.txt
+     ```
 
 ## Configuration
 1. **Set up AWS Cognito:**
@@ -52,25 +52,23 @@ This repository contains a Django-based authentication service that integrates w
 - Note the User Pool ID and App Client ID.
 
 2. **Environment Variables:** Create a `.env` file in the root directory of the project with the following content:
-
-  ```
-  AWS_REGION=your_aws_region
-  AWS_CLIENT_ID=your_cognito_app_client_id
-  Replace your_aws_region and your_cognito_app_client_id with your actual AWS settings.
-  ```
+     ```
+     AWS_REGION=your_aws_region
+     AWS_CLIENT_ID=your_cognito_app_client_id
+     Replace your_aws_region and your_cognito_app_client_id with your actual AWS settings.
+     ```
 
 3. **Database Migration:** Run the following command to set up your database:
-
-  ```bash
-  python manage.py migrate
-  ```
+     ```bash
+     python manage.py migrate
+     ```
 
 ## Usage
 1. **Run the server:**
-
-```bash
-python manage.py runserver
-```
+   ```bash
+   python manage.py runserver
+   ```
+   
 2. **Access the API:** The server will be running at `http://127.0.0.1:8000/`. You can use tools like Postman to interact with the API.
 
 
