@@ -12,10 +12,10 @@ AWS_CLIENT_ID = os.getenv('AWS_CLIENT_ID')
 AWS_REGION = os.getenv('AWS_REGION')
 
 def signup_user(username, password, email,nickname, full_name):
-    client = boto3.client('cognito-idp', region_name='AWS_REGION')
+    client = boto3.client('cognito-idp', region_name=AWS_REGION)
     try:
         response = client.sign_up(
-            ClientId='AWS_CLIENT_ID',
+            ClientId=AWS_CLIENT_ID,
             Username=username,
             Password=password,
             UserAttributes=[
@@ -29,10 +29,10 @@ def signup_user(username, password, email,nickname, full_name):
         return 'User already exists'
 
 def signin_user(username, password):
-    client = boto3.client('cognito-idp', region_name='AWS_REGION')
+    client = boto3.client('cognito-idp', region_name=AWS_REGION)
     try:
         response = client.initiate_auth(
-            ClientId='AWS_CLIENT_ID',
+            ClientId=AWS_CLIENT_ID,
             AuthFlow='USER_PASSWORD_AUTH',
             AuthParameters={'USERNAME': username, 'PASSWORD': password}
         )

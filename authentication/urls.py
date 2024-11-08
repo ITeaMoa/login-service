@@ -7,4 +7,5 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('signin/', views.signin_view, name='signin'),
     path('verify/', views.confirm_signup_view, name='verify'),
+    path('refresh/', views.refresh_token_view, name='refresh-token'),
 ]

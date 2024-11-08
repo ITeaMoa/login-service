@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authentication',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'login_project.urls'
@@ -127,3 +129,10 @@ AWS_COGNITO_REGION = 'ap-northeast-2'
 AWS_COGNITO_USER_POOL_ID = 'your-user-pool-id'
 AWS_COGNITO_APP_CLIENT_ID = 'your-app-client-id'
 AWS_COGNITO_APP_CLIENT_SECRET = 'your-app-client-secret'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://iteamoa-frontend.s3-website.ap-northeast-2.amazonaws.com",
+    "http://localhost:3000",  # Optional: for local testing
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
