@@ -27,7 +27,7 @@ phases:
 
       # Verify cairo-gobject installation
       - echo "Verifying installation of cairo-gobject..."
-      - ls /usr/include/cairo/cairo-gobject.h || echo "cairo-gobject.h not found. Attempting to build from source..."
+      - find /usr /usr/local -name cairo-gobject.h
 
   pre_build:
     commands:
