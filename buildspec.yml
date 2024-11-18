@@ -63,10 +63,10 @@ phases:
       
   post_build:
     commands:
-      # Push Docker Image to ECR Repository
-      - echo Build completed on `date`
-      - echo Pushing the Docker image...
-      - docker push $IMAGE_REPO_NAME:$IMAGE_TAG
+      # # Push Docker Image to ECR Repository
+      # - echo Build completed on `date`
+      # - echo Pushing the Docker image...
+      # - docker push $IMAGE_REPO_NAME:$IMAGE_TAG
 
       # # Setup kubectl with our EKS Cluster
       # - echo "Setting up kubectl for EKS Cluster iteamoa..."
