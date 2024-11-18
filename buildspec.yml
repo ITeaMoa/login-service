@@ -19,7 +19,6 @@ phases:
       - source ~/.bashrc
       - echo "Checking kubectl version..."
       - kubectl version --short --client
-      - aws sts assume-role --role-arn arn:aws:iam::970547342771:role/codebuild-iteamoa-loginpage-service-role --role-session-name test-session
 
       # # Install dependencies
       # - echo "Installing dependencies..."
