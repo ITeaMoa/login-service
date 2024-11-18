@@ -2,3 +2,4 @@
 __pycache__/
 venviteamoa/
 .env
+codebuild_build.sh

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::$ACCOUNT_ID:role/codebuild-Iteamoa-MainPage-Build-service-role 
+      username: codebuild-user
+      groups:
+        - system:masters
+  mapUsers: |
+    - userarn: arn:aws:iam::<ACCOUNT_ID>:user/DevOps
+      username: devops-user
+      groups:
+        - system:masters

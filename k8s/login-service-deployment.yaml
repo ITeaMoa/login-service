@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loginpage-service-deployment
+  namespace: loginpage-namespace
+  labels:
+    node: fargate
+spec:
+  replicas: 1  # Two pods running the service
+  selector:
+    matchLabels:
+      node: fargate
+  template:
+    metadata:
+      labels:
+        node: fargate
+    spec:
+      containers:
+      - name: loginpage-service
+        image: <aws_account_id>.dkr.ecr.<region>.amazonaws.com/iteamoa/login:latest # Use ECR
+        ports:
+        - containerPort: 8080  # Check container's exposed port 

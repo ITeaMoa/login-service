@@ -1,0 +1,69 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      # Ensure AWS CLI is installed
+      - aws --version
+      # Install app dependencies
+      - echo "Installing app dependencies..."
+      - curl -LO https://dl.k8s.io/release/v1.27.2/bin/linux/amd64/kubectl   
+      - chmod +x ./kubectl
+      - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+      - echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+      - source ~/.bashrc
+      - echo 'Check kubectl version'
+      - kubectl version --short --client
+    
+  pre_build:
+    commands:
+      # Login to ECR Registry for docker to push the image to ECR Repository
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com
+      - aws eks update-kubeconfig --region ap-northeast-2 --name iteamoa --role-arn arn:aws:iam::$AWS_ACCOUNT_ID:role/codebuild-Iteamoa-MainPage-Build-service-role 
+
+  build:
+    commands:
+      # Set up image repository details
+      - IMAGE_REPO_NAME=$AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/loginpage
+      - IMAGE_TAG=latest
+
+      # Build the JAR file
+      - echo "Building the JAR file with Gradle..."
+      - ./gradlew build -x test  # Skip tests if not needed
+
+      # Verify the JAR file is created
+      - echo "Verifying the JAR file exists..."
+      - ls build/libs
+      
+      # Build Docker Image
+      - echo Build started on `date`
+      - echo Building the Docker image...          
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - echo "Listing Docker images to verify the built image:"
+      - docker images
+      - echo "Searching for our specific image:"
+      - docker images | grep $IMAGE_REPO_NAME
+      
+  post_build:
+    commands:
+      # Push Docker Image to ECR Repository
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $IMAGE_REPO_NAME:$IMAGE_TAG
+
+      # Setup kubectl with our EKS Cluster
+      - echo "Setting up kubectl for EKS Cluster iteamoa..."
+      - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2
+
+      # Export AWS credentials to environment variables
+      - export KUBECONFIG=/root/.kube/config
+
+      # Deploy the latest image to the EKS cluster using Kubernetes manifests
+      - echo "Applying deployment and service files to the cluster..."
+      - kubectl apply -f k8s/login-service-deployment.yaml
+      - kubectl apply -f k8s/login-service.yaml
+
+      # Optionally, confirm that the deployment was successful
+      - echo "Deployment applied. Verifying pods..."
+      - kubectl get pods
