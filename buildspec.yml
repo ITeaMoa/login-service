@@ -18,6 +18,7 @@ phases:
           gobject-introspection 
           gobject-introspection-devel 
           cairo-devel 
+          cairo-gobject
           pkgconfig
     
   pre_build:
