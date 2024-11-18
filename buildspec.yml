@@ -14,6 +14,7 @@ phases:
       - source ~/.bashrc
       - echo 'Check kubectl version'
       - kubectl version --short --client
+      yum install -y cmake cairo-gobject cairo-devel gobject-introspection gobject-introspection-devel pkgconfig gcc gcc-c++
 
     
   pre_build:
