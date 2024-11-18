@@ -20,7 +20,7 @@ phases:
 
       # Install dependencies
       - echo "Installing dependencies..."
-      - yum install -y cmake gobject-introspection gobject-introspection-devel pkgconfig gcc gcc-c++ python3-devel make
+      - apt-get update && apt-get install -y python3-dev libcairo2-dev meson ninja-build
 
   pre_build:
     commands:
