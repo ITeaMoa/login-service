@@ -11,7 +11,8 @@ phases:
       - echo "Installing kubectl..."
       - curl -LO https://dl.k8s.io/release/v1.27.2/bin/linux/amd64/kubectl   
       - chmod +x ./kubectl
-      - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+      - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl
+      - export PATH=$PATH:$HOME/bin
       - echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
       - source ~/.bashrc
       - echo "Checking kubectl version..."
@@ -27,7 +28,7 @@ phases:
 
       # Verify cairo-gobject installation
       - echo "Verifying installation of cairo-gobject..."
-      - find /usr /usr/local -name cairo-gobject.h
+      - pkg-config --modversion cairo-gobject
 
   pre_build:
     commands:
