@@ -14,15 +14,7 @@ phases:
       - source ~/.bashrc
       - echo 'Check kubectl version'
       - kubectl version --short --client
-      - yum install -y 
-          gobject-introspection 
-          gobject-introspection-devel 
-          cairo-devel 
-          cairo-gobject
-          pkgconfig
-          gcc-c++
-          gcc
-          python3-devel
+
     
   pre_build:
     commands:

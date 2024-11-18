@@ -16,7 +16,16 @@ RUN apt-get update && apt-get install -y \
     libcairo2-dev \
     cmake \
     libgirepository1.0-dev \
+    libcairo2-dev \
+    libcairo-gobject2 \
+    libgirepository1.0-dev \
+    gobject-introspection \
+    python3-dev \
+    python3-pip \
+    build-essential \
+    git \
     && rm -rf /var/lib/apt/lists/*
+    
 
 # Upgrade pip, setuptools, and wheel
 RUN pip install --upgrade pip setuptools wheel
