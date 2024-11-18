@@ -10,7 +10,7 @@ data:
       groups:
         - system:masters
   mapUsers: |
-    - userarn: arn:aws:iam::<ACCOUNT_ID>:user/DevOps
+    - userarn: arn:aws:iam::$ACCOUNT_ID:user/DevOps
       username: devops-user
       groups:
         - system:masters
