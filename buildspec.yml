@@ -2,6 +2,8 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      python: 3.10
     commands:
       # Verify AWS CLI
       - echo "Verifying AWS CLI installation..."
@@ -18,10 +20,10 @@ phases:
       - echo "Checking kubectl version..."
       - kubectl version --short --client
 
-      # Install dependencies
-      - echo "Installing dependencies..."
-      - yum groupinstall -y "Development Tools"
-      - yum install -y python3-devel cairo cairo-devel cairo-gobject gobject-introspection-devel meson ninja-build
+      # # Install dependencies
+      # - echo "Installing dependencies..."
+      # - yum groupinstall -y "Development Tools"
+      # - yum install -y python3-devel cairo cairo-devel cairo-gobject gobject-introspection-devel meson ninja-build
 
   pre_build:
     commands:
@@ -36,28 +38,28 @@ phases:
       - IMAGE_REPO_NAME=$AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/loginpage
       - IMAGE_TAG=latest
 
-      # Install Python dependencies
-      - echo "Installing Python dependencies..."
-      - pip install --upgrade pip
-      - pip install matplotlib==3.8.4
-      - pip install -r requirements.txt
+      # # Install Python dependencies
+      # - echo "Installing Python dependencies..."
+      # - pip install --upgrade pip
+      # - pip install matplotlib==3.8.4
+      # - pip install -r requirements.txt
 
-      # Collect static files
-      - echo "Collecting static files..."
-      - python manage.py collectstatic --noinput
+      # # Collect static files
+      # - echo "Collecting static files..."
+      # - python manage.py collectstatic --noinput
 
-      # Migrate database
-      - echo "Applying database migrations..."
-      - python manage.py migrate
+      # # Migrate database
+      # - echo "Applying database migrations..."
+      # - python manage.py migrate
       
-      # Build Docker Image
-      - echo Build started on `date`
-      - echo Building the Docker image...          
-      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
-      - echo "Listing Docker images to verify the built image:"
-      - docker images
-      - echo "Searching for our specific image:"
-      - docker images | grep $IMAGE_REPO_NAME
+      # # Build Docker Image
+      # - echo Build started on `date`
+      # - echo Building the Docker image...          
+      # - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      # - echo "Listing Docker images to verify the built image:"
+      # - docker images
+      # - echo "Searching for our specific image:"
+      # - docker images | grep $IMAGE_REPO_NAME
       
   post_build:
     commands:
@@ -66,9 +68,9 @@ phases:
       - echo Pushing the Docker image...
       - docker push $IMAGE_REPO_NAME:$IMAGE_TAG
 
-      # Setup kubectl with our EKS Cluster
-      - echo "Setting up kubectl for EKS Cluster iteamoa..."
-      - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2
+      # # Setup kubectl with our EKS Cluster
+      # - echo "Setting up kubectl for EKS Cluster iteamoa..."
+      # - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2
 
       # Export AWS credentials to environment variables
       - export KUBECONFIG=/root/.kube/config
