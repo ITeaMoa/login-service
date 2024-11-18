@@ -14,7 +14,11 @@ phases:
       - source ~/.bashrc
       - echo 'Check kubectl version'
       - kubectl version --short --client
-      - yum install -y cairo cairo-devel pkgconfig
+      - yum install -y \
+          gobject-introspection \
+          gobject-introspection-devel \
+          cairo-devel \
+          pkgconfig
     
   pre_build:
     commands:
