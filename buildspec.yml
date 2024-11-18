@@ -30,7 +30,7 @@ phases:
       # Login to ECR Registry for docker to push the image to ECR Repository
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com
-      - aws eks update-kubeconfig --region ap-northeast-2 --name iteamoa --role-arn arn:aws:iam::$AWS_ACCOUNT_ID:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS
+      # - aws eks update-kubeconfig --region ap-northeast-2 --name iteamoa --role-arn arn:aws:iam::$AWS_ACCOUNT_ID:role/codebuild-iteamoa-loginpage-service-role 
 
   build:
     commands:
