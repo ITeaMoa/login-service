@@ -28,13 +28,18 @@ phases:
       - IMAGE_REPO_NAME=$AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/loginpage
       - IMAGE_TAG=latest
 
-      # Build the JAR file
-      - echo "Building the JAR file with Gradle..."
-      - ./gradlew build -x test  # Skip tests if not needed
+      # Install Python dependencies
+      - echo "Installing Python dependencies..."
+      - pip install --upgrade pip
+      - pip install -r requirements.txt
 
-      # Verify the JAR file is created
-      - echo "Verifying the JAR file exists..."
-      - ls build/libs
+      # Collect static files
+      - echo "Collecting static files..."
+      - python manage.py collectstatic --noinput
+
+      # Migrate database
+      - echo "Applying database migrations..."
+      - python manage.py migrate
       
       # Build Docker Image
       - echo Build started on `date`
