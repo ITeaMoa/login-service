@@ -3,7 +3,7 @@ kind: ClusterRoleBinding
 metadata:
   name: codebuild-admin-binding
 subjects:
-- kind: User
+- kind: Role
   name: "arn:aws:iam::970547342771:role/codebuild-iteamoa-loginpage-service-role"
   apiGroup: rbac.authorization.k8s.io
 roleRef:
