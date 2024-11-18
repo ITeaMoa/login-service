@@ -29,22 +29,6 @@ phases:
       - echo "Verifying installation of cairo-gobject..."
       - ls /usr/include/cairo/cairo-gobject.h || echo "cairo-gobject.h not found. Attempting to build from source..."
 
-      # Build cairo from source if necessary
-      - echo "Downloading and building cairo from source..."
-      - yum install -y wget glib2-devel libpng-devel zlib-devel
-      - wget https://cairographics.org/releases/cairo-1.18.2.tar.xz
-      - tar -xf cairo-1.18.2.tar.xz
-      - cd cairo-1.18.2
-      - ./configure --enable-gobject
-      - make
-      - make install
-      - cd ..
-      - rm -rf cairo-1.18.2.tar.xz cairo-1.18.2
-      - export C_INCLUDE_PATH=/usr/local/include:$C_INCLUDE_PATH
-      - export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
-      - echo "Verifying cairo installation after source build..."
-      - ls /usr/local/include/cairo/cairo-gobject.h
-
   pre_build:
     commands:
       # Login to ECR Registry for docker to push the image to ECR Repository
