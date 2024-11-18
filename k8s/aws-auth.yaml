@@ -5,7 +5,7 @@ metadata:
   namespace: kube-system
 data:
   mapRoles: |
-    - rolearn: arn:aws:iam::$ACCOUNT_ID:role/codebuild-Iteamoa-MainPage-Build-service-role 
+    - rolearn: arn:aws:iam::$ACCOUNT_ID:role/codebuild-iteamoa-loginpage-service-role
       username: codebuild-user
       groups:
         - system:masters
