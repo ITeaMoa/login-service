@@ -9,6 +9,13 @@ phases:
       - echo "Verifying AWS CLI installation..."
       - aws --version
 
+      # Print cache directory before deletion (for debugging)
+      - echo "Cache directory before deletion:"
+      - ls -la ~/.aws/cli/cache || echo "No cache folder found"
+
+      # Delete the AWS CLI cache folder
+      - rm -rf ~/.aws/cli/cache
+
       # Install kubectl
       - echo "Installing kubectl..."
       - curl -LO https://dl.k8s.io/release/v1.27.2/bin/linux/amd64/kubectl   
@@ -74,6 +81,7 @@ phases:
 
       # Export AWS credentials to environment variables
       - export KUBECONFIG=/root/.kube/config
+      
 
       # Deploy the latest image to the EKS cluster using Kubernetes manifests
       - echo "Applying deployment and service files to the cluster..."
