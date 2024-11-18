@@ -39,6 +39,7 @@ phases:
       # Install Python dependencies
       - echo "Installing Python dependencies..."
       - pip install --upgrade pip
+      - pip install matplotlib==3.8.4
       - pip install -r requirements.txt
 
       # Collect static files
