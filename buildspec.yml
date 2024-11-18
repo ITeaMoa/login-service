@@ -20,8 +20,9 @@ phases:
 
       # Install dependencies
       - echo "Installing dependencies..."
-      - apt-get update && apt-get install -y python3-dev libcairo2-dev meson ninja-build
-
+      - yum groupinstall -y "Development Tools"
+      - yum install -y python3-devel cairo-devel gobject-introspection-devel meson ninja-build
+      
   pre_build:
     commands:
       # Login to ECR Registry for docker to push the image to ECR Repository
