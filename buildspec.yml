@@ -14,9 +14,11 @@ phases:
       - source ~/.bashrc
       - echo 'Check kubectl version'
       - kubectl version --short --client
+      - yum remove -y cairo-gobject cairo-devel
       - yum install -y cmake cairo-gobject cairo-devel gobject-introspection gobject-introspection-devel pkgconfig gcc gcc-c++ python3-devel make
       - echo "Verifying installation of cairo-gobject..."
       - ls /usr/include/cairo/cairo-gobject.h
+      
       - export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig:$PKG_CONFIG_PATH
     
   pre_build:
