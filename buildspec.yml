@@ -3,24 +3,48 @@ version: 0.2
 phases:
   install:
     commands:
-      # Ensure AWS CLI is installed
+      # Verify AWS CLI
+      - echo "Verifying AWS CLI installation..."
       - aws --version
-      # Install app dependencies
-      - echo "Installing app dependencies..."
+
+      # Install kubectl
+      - echo "Installing kubectl..."
       - curl -LO https://dl.k8s.io/release/v1.27.2/bin/linux/amd64/kubectl   
       - chmod +x ./kubectl
       - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
-      - echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+      - echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
       - source ~/.bashrc
-      - echo 'Check kubectl version'
+      - echo "Checking kubectl version..."
       - kubectl version --short --client
-      - yum remove -y cairo-gobject cairo-devel
+
+      # Remove existing cairo-gobject (if conflicting)
+      - echo "Removing conflicting cairo-gobject packages..."
+      - yum remove -y cairo-gobject cairo-devel || true
+
+      # Install dependencies
+      - echo "Installing dependencies..."
       - yum install -y cmake cairo-gobject cairo-devel gobject-introspection gobject-introspection-devel pkgconfig gcc gcc-c++ python3-devel make
+
+      # Verify cairo-gobject installation
       - echo "Verifying installation of cairo-gobject..."
-      - ls /usr/include/cairo/cairo-gobject.h
-      
-      - export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig:$PKG_CONFIG_PATH
-    
+      - ls /usr/include/cairo/cairo-gobject.h || echo "cairo-gobject.h not found. Attempting to build from source..."
+
+      # Build cairo from source if necessary
+      - echo "Downloading and building cairo from source..."
+      - yum install -y wget glib2-devel libpng-devel zlib-devel
+      - wget https://cairographics.org/releases/cairo-1.17.4.tar.xz
+      - tar -xf cairo-1.17.4.tar.xz
+      - cd cairo-1.17.4
+      - ./configure --enable-gobject
+      - make
+      - make install
+      - cd ..
+      - rm -rf cairo-1.17.4.tar.xz cairo-1.17.4
+      - export C_INCLUDE_PATH=/usr/local/include:$C_INCLUDE_PATH
+      - export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+      - echo "Verifying cairo installation after source build..."
+      - ls /usr/local/include/cairo/cairo-gobject.h
+
   pre_build:
     commands:
       # Login to ECR Registry for docker to push the image to ECR Repository
