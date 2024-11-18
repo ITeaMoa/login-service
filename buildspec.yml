@@ -27,8 +27,10 @@ phases:
       - yum install -y cmake cairo-gobject cairo-devel gobject-introspection gobject-introspection-devel pkgconfig gcc gcc-c++ python3-devel make
 
       # Verify cairo-gobject installation
-      - echo "Verifying installation of cairo-gobject..."
+      - export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/local/lib/pkgconfig
+      - echo $PKG_CONFIG_PATH
       - pkg-config --modversion cairo-gobject
+
 
   pre_build:
     commands:
