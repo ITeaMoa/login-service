@@ -45,7 +45,7 @@ protobuf==4.25.1
 ptyprocess==0.7.0
 pure-eval==0.2.2
 py4j==0.10.9.7
-pycairo==1.23.0 --only-binary :all:
+pycairo==1.21.0
 pycryptodome==3.19.0
 Pygments==2.17.2
 PyGObject==3.48.2
