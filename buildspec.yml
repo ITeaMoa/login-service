@@ -134,7 +134,7 @@ phases:
 
       # Collect static files
       - echo "Collecting static files..."
-      - python manage.py collectstatic --noinput
+      - python manage.py
 
       # Migrate database
       - echo "Applying database migrations..."
