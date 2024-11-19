@@ -100,7 +100,7 @@ phases:
       - pip install pycparser==2.22
       - pip install pycryptodome==3.19.0
       - pip install Pygments==2.17.2
-      - pip install PyGObject==3.50.0
+      # - pip install PyGObject==3.50.0
       - pip install pyspark==3.5.0
       - pip install python-dateutil==2.9.0.post0
       - pip install python-dotenv==0.21.0
