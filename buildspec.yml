@@ -28,9 +28,9 @@ phases:
       - kubectl version --short --client
 
       # # Install dependencies
-      # - echo "Installing dependencies..."
+      - echo "Installing dependencies..."
       # - yum groupinstall -y "Development Tools"
-      # - yum install -y python3-devel cairo cairo-devel cairo-gobject gobject-introspection-devel meson ninja-build
+      - yum install -y python3-devel cairo cairo-devel cairo-gobject gobject-introspection-devel meson ninja-build
 
   pre_build:
     commands:
