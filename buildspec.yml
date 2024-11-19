@@ -30,13 +30,17 @@ phases:
       # # Install dependencies
       - echo "Installing dependencies..."
       - yum groupinstall -y "Development Tools"
-      - sudo yum install -y python3-devel cairo cairo-devel cairo-gobject gobject-introspection-devel meson ninja-build
+      - sudo yum install -y python3-devel cairo cairo-devel cairo-gobject gobject-introspection-devel libffi-devel
+      - yum install -y meson ninja-build
+      - yum install -y cmake
 
   pre_build:
     commands:
       # Export AWS credentials
       - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
       - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+
+      - export PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/share/pkgconfig
 
       # Login to ECR Registry for docker to push the image to ECR Repository
       - echo "Logging in to Amazon ECR..."
