@@ -50,7 +50,7 @@ phases:
   build:
     commands:
       # Set up image repository details
-      - IMAGE_REPO_NAME=$AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/loginpage
+      - IMAGE_REPO_NAME=$AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login
       - IMAGE_TAG=latest
 
       # Install Python dependencies
