@@ -29,7 +29,7 @@ phases:
 
       # # Install dependencies
       - echo "Installing dependencies..."
-      # - yum groupinstall -y "Development Tools"
+      - yum groupinstall -y "Development Tools"
       - sudo yum install -y python3-devel cairo cairo-devel cairo-gobject gobject-introspection-devel meson ninja-build
 
   pre_build:
