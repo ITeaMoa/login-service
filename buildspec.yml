@@ -49,39 +49,39 @@ phases:
       - IMAGE_REPO_NAME=$AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/loginpage
       - IMAGE_TAG=latest
 
-      # # Install Python dependencies
-      # - echo "Installing Python dependencies..."
-      # - pip install --upgrade pip
+      # Install Python dependencies
+      - echo "Installing Python dependencies..."
+      - pip install --upgrade pip
       # - pip install matplotlib==3.8.4
-      # - pip install -r requirements.txt
+      - pip install -r requirements.txt
 
-      # # Collect static files
-      # - echo "Collecting static files..."
-      # - python manage.py collectstatic --noinput
+      # Collect static files
+      - echo "Collecting static files..."
+      - python manage.py collectstatic --noinput
 
-      # # Migrate database
-      # - echo "Applying database migrations..."
-      # - python manage.py migrate
+      # Migrate database
+      - echo "Applying database migrations..."
+      - python manage.py migrate
       
-      # # Build Docker Image
-      # - echo Build started on `date`
-      # - echo Building the Docker image...          
-      # - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
-      # - echo "Listing Docker images to verify the built image:"
-      # - docker images
-      # - echo "Searching for our specific image:"
-      # - docker images | grep $IMAGE_REPO_NAME
+      # Build Docker Image
+      - echo Build started on `date`
+      - echo Building the Docker image...          
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - echo "Listing Docker images to verify the built image:"
+      - docker images
+      - echo "Searching for our specific image:"
+      - docker images | grep $IMAGE_REPO_NAME
       
   post_build:
     commands:
       # # Push Docker Image to ECR Repository
-      # - echo Build completed on `date`
-      # - echo Pushing the Docker image...
-      # - docker push $IMAGE_REPO_NAME:$IMAGE_TAG
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $IMAGE_REPO_NAME:$IMAGE_TAG
 
       # # Setup kubectl with our EKS Cluster
-      # - echo "Setting up kubectl for EKS Cluster iteamoa..."
-      # - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2
+      - echo "Setting up kubectl for EKS Cluster iteamoa..."
+      - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2
 
       # Export AWS credentials to environment variables
       - export KUBECONFIG=/root/.kube/config
