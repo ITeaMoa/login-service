@@ -6,6 +6,12 @@ from django.urls import reverse
 from dotenv import load_dotenv
 import boto3
 import os
+import hmac
+import hashlib
+import base64
+import string
+import random
+import bcrypt
 from django.views.decorators.csrf import csrf_exempt
 
 # Load environment variables from the .env file
@@ -13,48 +19,224 @@ load_dotenv()
 
 # Now you can access the environment variables
 AWS_CLIENT_ID = os.getenv('AWS_CLIENT_ID')
+AWS_CLIENT_SECRET =os.getenv('AWS_CLIENT_SECRET')
 AWS_REGION = os.getenv('AWS_REGION')
+AWS_USER_POOL_ID = os.getenv('AWS_USER_POOL_ID')
+
+def calculate_secret_hash(client_id, client_secret, username):
+    message = username + client_id
+    dig = hmac.new(
+        client_secret.encode('utf-8'),
+        msg=message.encode('utf-8'),
+        digestmod=hashlib.sha256
+    ).digest()
+    return base64.b64encode(dig).decode()
+
+def generate_valid_password(length=12):
+    if length < 8:
+        raise ValueError("Password length must be at least 8 characters.")
+    # Ensure the password has at least one of each required character type
+    upper = random.choice(string.ascii_uppercase)
+    lower = random.choice(string.ascii_lowercase)
+    digit = random.choice(string.digits)
+    special = random.choice("!@#$%^&*()-_=+[]{}|;:,.<>?/")  # Define your special characters
+    remaining = ''.join(random.choices(string.ascii_letters + string.digits + "!@#$%^&*()-_=+[]{}|;:,.<>?/", k=length - 4))
+    
+    # Combine and shuffle to ensure randomness
+    password = upper + lower + digit + special + remaining
+    return ''.join(random.sample(password, len(password)))
 
 @csrf_exempt
-def signup_view(request):   # auth/signup
+def email_verification_view(request):  # auth/verify-email
     if request.method == 'POST':
-        data = json.loads(request.body)  # Load JSON data from request body
-        username = data.get('username')
-        password = data.get('password')
-        email = data.get('email')
-        nickname = data.get('nickname')
-        full_name = data.get('full_name')
+        try:
+            data = json.loads(request.body)
+            email = data['email']
+            if not email:
+                return JsonResponse({'error': 'Email is required.'}, status=400)
+            
+            client_id = os.getenv('AWS_CLIENT_ID')
+            client_secret = os.getenv('AWS_CLIENT_SECRET')
+            if not client_secret:
+                return JsonResponse({'error': 'AWS_CLIENT_SECRET is not set.'}, status=500)
+            
+            # Calculate the SECRET_HASH
+            secret_hash = calculate_secret_hash(client_id, client_secret, email)
+            
+            client = boto3.client('cognito-idp', region_name=AWS_REGION)
+            
+            response = client.sign_up(
+                ClientId=client_id,
+                SecretHash=secret_hash,  # Include SECRET_HASH
+                Username=email,
+                Password=generate_valid_password(),  # Generate a random password for initial sign-up
+                UserAttributes=[
+                    {'Name': 'email', 'Value': email},
+                ]
+            )
+            
+            return JsonResponse({'message': 'Verification code sent to email!'}, status=200)
+        except client.exceptions.UsernameExistsException:
+            return JsonResponse({'error': 'Email is already registered.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
-        result = signup_user(username, password, email, nickname, full_name)
+@csrf_exempt
+def resend_confirmation_view(request):  # auth/resend-confirmation
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            if not email:
+                return JsonResponse({'error': 'Email is required.'}, status=400)
+            
+            client = boto3.client('cognito-idp', region_name=AWS_REGION)
+            secret_hash = calculate_secret_hash(AWS_CLIENT_ID, AWS_CLIENT_SECRET, email)
+            
+            # Resend the confirmation code
+            response = client.resend_confirmation_code(
+                ClientId=os.getenv('AWS_CLIENT_ID'),
+                Username=email,
+                SecretHash=secret_hash,
+            )
+            
+            return JsonResponse({'message': 'Confirmation code resent successfully!'}, status=200)
+        except client.exceptions.UserNotFoundException:
+            return JsonResponse({'error': 'User not found.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
+
+@csrf_exempt
+def confirm_email_view(request):  # auth/confirm-email
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data['email']
+            verification_code = data['verification_code']
+            
+            client = boto3.client('cognito-idp', region_name=AWS_REGION)
+            secret_hash = calculate_secret_hash(AWS_CLIENT_ID, AWS_CLIENT_SECRET, email)
+
+            response = client.confirm_sign_up(
+                ClientId=os.getenv('AWS_CLIENT_ID'),
+                SecretHash=secret_hash,
+                Username=email,
+                ConfirmationCode=verification_code
+            )
+            
+            return JsonResponse({'message': 'Email verified successfully!'}, status=200)
         
-        if result:  # Check if signup_user succeeded
-            return JsonResponse({'message': 'User signed up successfully!'}, status=201)
-        else:
-            return JsonResponse({'error': 'Signup failed.'}, status=400)
+        except client.exceptions.CodeMismatchException:
+            return JsonResponse({'error': 'Invalid verification code.'}, status=400)
+        except client.exceptions.UserNotFoundException:
+            return JsonResponse({'error': 'User not found.'}, status=404)
+        except client.exceptions.NotAuthorizedException as e:
+            if 'User is already confirmed' in str(e):
+                return JsonResponse({'error': 'User is already confirmed.'}, status=400)
+            return JsonResponse({'error': 'Not authorized for this action.'}, status=403)
+        except Exception as e:
+            # Log unexpected errors for debugging
+            return JsonResponse({'error': f'Unexpected error: {str(e)}'}, status=500)
+    
+    return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
+def hash_password(password):
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+
+@csrf_exempt
+def complete_signup_view(request):  # auth/complete-signup
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data['email']
+            nickname = data['nickname']
+            password = data['password']
+            
+            if not email or not password or not nickname:
+                return JsonResponse({'error': 'Email, password, and nickname are required.'}, status=400)
+            
+            client = boto3.client('cognito-idp', region_name=AWS_REGION)
+
+            # Update the user's attributes
+            client.admin_update_user_attributes(
+                UserPoolId=os.getenv('AWS_USER_POOL_ID'),  # Your User Pool ID
+                Username=email,
+                UserAttributes=[
+                    {'Name': 'nickname', 'Value': nickname},
+                ]
+            )
+            
+            # Set the new password
+            client.admin_set_user_password(
+                UserPoolId=AWS_USER_POOL_ID,
+                Username=email,
+                Password=password,
+                Permanent=True
+            )
+
+            # Retrieve Cognito user ID (sub)
+            client = boto3.client('cognito-idp', region_name=AWS_REGION)
+            user_response = client.admin_get_user(
+                UserPoolId=AWS_USER_POOL_ID,
+                Username=email
+            )
+            sub = next(attr['Value'] for attr in user_response['UserAttributes'] if attr['Name'] == 'sub')
+
+            hashed_password = hash_password(password)
+
+            # Save user profile to DynamoDB
+            dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
+            table = dynamodb.Table('IM_MAIN_TB')
+
+            # Insert user info
+            table.put_item(
+                Item={
+                    'Pk': f"USER#{sub}",
+                    'Sk': f"INFO#",
+                    'email': email,
+                    'password': hashed_password, 
+                    'nickname': nickname,
+                }
+            )
+
+            return JsonResponse({'message': 'Signup completed successfully, profile added to DynamoDB!'}, status=201)
+        
+        except Exception as e:
+            return JsonResponse({'error': f'Unexpected error: {str(e)}'}, status=500)
+    
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
 @csrf_exempt
 def signin_view(request):   # auth/signin
     if request.method == 'POST':
         data = json.loads(request.body)  # Load JSON data from request body
-        username = data.get('username')
+        email = data.get('email')
         password = data.get('password')
+        secret_hash = calculate_secret_hash(AWS_CLIENT_ID, AWS_CLIENT_SECRET, email)
+        # secret hash 꼭 포함하기 !! > 포함안하면 로그인 오류남 (cognito 업데이트 이후 그런듯/한달전만해도 안그럼)
+        # 지금은 secret이 필수로 포함되어서 모든 cognito와 소통하는 항목에는 포함해줘야함 (다른 함수도 다 포함되어 있음)
         
-
         client = boto3.client('cognito-idp', region_name=os.getenv('AWS_REGION'))
         
         try:
             response = client.initiate_auth(
-                ClientId=os.getenv('AWS_CLIENT_ID'),  # Your App Client ID
+                ClientId=AWS_CLIENT_ID,  
                 AuthFlow='USER_PASSWORD_AUTH',  # Use USER_SRP_AUTH for SRP flow
                 AuthParameters={
-                    'USERNAME': username,
+                    'USERNAME': email,
                     'PASSWORD': password,
+                    'SECRET_HASH': secret_hash
                 }
             )
             
             # Retrieve the tokens from the response
+            authentication_result = response['AuthenticationResult']
             access_token = response['AuthenticationResult']['AccessToken']
             id_token = response['AuthenticationResult']['IdToken']
             refresh_token = response['AuthenticationResult']['RefreshToken']
@@ -65,44 +247,24 @@ def signin_view(request):   # auth/signin
                 'refresh_token': refresh_token,
             }, status=200)
         
-        except client.exceptions.NotAuthorizedException:
-            return JsonResponse({'error': 'Invalid username or password.'}, status=401)
+        except client.exceptions.NotAuthorizedException as e:
+            error_message = str(e)
+            if "User is disabled" in error_message:
+                return JsonResponse({'error': 'User is disabled.'}, status=403)
+            elif "User is not confirmed" in error_message:
+                return JsonResponse({'error': 'User is not confirmed.'}, status=403)
+            else:
+                return JsonResponse({'error': 'Invalid username or password.'}, status=401)
+            
         except client.exceptions.UserNotFoundException:
             return JsonResponse({'error': 'User does not exist.'}, status=404)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': f'Unexpected error: {str(e)}'}, status=500)
 
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
-
 
 def homepage_view(request):
     return render(request, 'homepage.html')
-
-@csrf_exempt  # Only use this for testing, better to handle CSRF properly in production
-def confirm_signup_view(request):   # auth/verify
-    if request.method == 'POST':    
-        try:
-            data = json.loads(request.body)  # Load JSON data from request body
-            username = data['username']
-            verification_code = data['verification_code']
-
-            client = boto3.client('cognito-idp', region_name=os.getenv('AWS_REGION'))  # Use environment variable for region
-            response = client.confirm_sign_up(
-                ClientId=os.getenv('AWS_CLIENT_ID'),  # Use environment variable for Client ID
-                Username=username,
-                ConfirmationCode=verification_code
-            )
-            return JsonResponse({'message': 'User confirmed successfully!'}, status=200)
-        except client.exceptions.CodeMismatchException:
-            return JsonResponse({'error': 'Invalid verification code.'}, status=400)
-        except client.exceptions.UserNotFoundException:
-            return JsonResponse({'error': 'User not found.'}, status=404)
-        except client.exceptions.NotAuthorizedException:
-            return JsonResponse({'error': 'User is already confirmed.'}, status=400)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
 @csrf_exempt
 def refresh_token_view(request):

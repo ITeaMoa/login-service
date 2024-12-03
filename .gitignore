@@ -1,5 +1,6 @@
 *.pyc
 __pycache__/
-venviteamoa/
+.venv/
 .env
 codebuild_build.sh
+k8s.bak/

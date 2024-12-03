@@ -1,22 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: loginpage-service-deployment
-  namespace: loginpage-namespace
+  name: login-service-deployment
+  namespace: login-local-namespace #loginpage-namespace
   labels:
-    node: fargate
+    app: local #fargate
 spec:
   replicas: 1  # Two pods running the service
   selector:
     matchLabels:
-      node: fargate
+      app: local
   template:
     metadata:
-      labels:
-        node: fargate
+     labels:
+      app: local
     spec:
       containers:
       - name: loginpage-service
-        image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest # Use ECR
+        image: ghcr.io/brynnpark/login-test:latest #970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest # Use ECR
         ports:
         - containerPort: 8080  # Check container's exposed port 
+      imagePullSecrets:
+      - name: ghcr-credentials

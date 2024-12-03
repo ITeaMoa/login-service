@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: loginpage-service
-  namespace: loginpage-namespace
+  name: login-service
+  namespace: login-local-namespace #loginpage-namespace
 spec:
   selector:
-    app: loginpage
+    app: local #loginpage
   ports:
     - protocol: TCP
-      port: 8081              # LoadBalancer listens on port 8081 for loginpage
-      targetPort: 8080        # Forwards to 8080 on the container
-  type: ClusterIP
+      port: 8080              # LoadBalancer listens on port 8081 for loginpage
+      nodePort: 30081
+  type: NodePort
