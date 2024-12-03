@@ -221,6 +221,7 @@ def signin_view(request):   # auth/signin
         secret_hash = calculate_secret_hash(AWS_CLIENT_ID, AWS_CLIENT_SECRET, email)
         # secret hash 꼭 포함하기 !! > 포함안하면 로그인 오류남 (cognito 업데이트 이후 그런듯/한달전만해도 안그럼)
         # 지금은 secret이 필수로 포함되어서 모든 cognito와 소통하는 항목에는 포함해줘야함 (다른 함수도 다 포함되어 있음)
+        # 얘는 sub 하면 오류나고 email 해야함 (이유가 뭐지 .. )
         
         client = boto3.client('cognito-idp', region_name=os.getenv('AWS_REGION'))
         
@@ -270,22 +271,36 @@ def homepage_view(request):
 def refresh_token_view(request):
     if request.method == 'POST':
         data = json.loads(request.body)
+        email = data.get('email')
         refresh_token = data.get('refresh_token')
+        print(f"Refresh Token: {refresh_token}")
 
-        client = boto3.client('cognito-idp', region_name=os.getenv('AWS_REGION'))
-
+        client = boto3.client('cognito-idp', region_name=AWS_REGION)
+        
+        user_response = client.admin_get_user(
+            UserPoolId=AWS_USER_POOL_ID,
+            Username=email
+        )
+        sub = next(attr['Value'] for attr in user_response['UserAttributes'] if attr['Name'] == 'sub')
+        secret_hash = calculate_secret_hash(AWS_CLIENT_ID, AWS_CLIENT_SECRET, sub)
+        # sub 말고 email 넣으면 cognito에서 반환안해줌 
+        # Refer to https://stackoverflow.com/questions/50337252/aws-cognito-refresh-token-fails-on-secret-hash
+        
         try:
             response = client.initiate_auth(
-                ClientId=os.getenv('AWS_CLIENT_ID'),
+                ClientId=AWS_CLIENT_ID,
                 AuthFlow='REFRESH_TOKEN_AUTH',
                 AuthParameters={
-                    'REFRESH_TOKEN': refresh_token
+                    'REFRESH_TOKEN': refresh_token,
+                    'SECRET_HASH': secret_hash
                 }
             )
+            
             # Extract the new tokens from the response
-            access_token = response['AuthenticationResult']['AccessToken']
-            id_token = response['AuthenticationResult']['IdToken']
-            new_refresh_token = response['AuthenticationResult'].get('RefreshToken')  # May receive a new refresh token
+            authentication_result = response['AuthenticationResult']
+            access_token = authentication_result['AccessToken']
+            id_token = authentication_result['IdToken']
+            new_refresh_token = authentication_result.get('RefreshToken')   # may be null
 
             return JsonResponse({
                 'access_token': access_token,

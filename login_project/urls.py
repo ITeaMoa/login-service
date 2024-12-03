@@ -20,6 +20,6 @@ from authentication.views import homepage_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('authentication.urls', namespace='authentication')),  # Include your authentication app URLs
+    path('', include('authentication.urls', namespace='authentication')),  # Include your authentication app URLs
     path('', homepage_view, name='home'),
 ]
