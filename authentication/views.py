@@ -171,14 +171,21 @@ def complete_signup_view(request):  # auth/complete-signup
                 return JsonResponse({'error': 'Email, password, and nickname are required.'}, status=400)
             
             client = boto3.client('cognito-idp', region_name=AWS_REGION)
-            dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
-            table = dynamodb.Table('IM_MAIN_TB')
-            response = table.query(
-                IndexName='Nickname-index',  # Ensure a DynamoDB index exists for nickname
-                KeyConditionExpression=Key('nickname').eq(nickname)
+            response = client.list_users(
+                UserPoolId=AWS_USER_POOL_ID,
+                Filter=f'custom:nickname = "{nickname}"'
             )
-            if response['Items']:
+            if response['Users']:
                 return JsonResponse({'error': 'Nickname is already taken.'}, status=409)
+            
+            # dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
+            # table = dynamodb.Table('IM_MAIN_TB')
+            # response = table.query(
+            #     IndexName='Nickname-index',  # Ensure a DynamoDB index exists for nickname
+            #     KeyConditionExpression=Key('nickname').eq(nickname)
+            # )
+            # if response['Items']:
+            #     return JsonResponse({'error': 'Nickname is already taken.'}, status=409)
 
             # Update the user's attributes
             try:
