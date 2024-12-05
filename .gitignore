@@ -4,3 +4,4 @@ __pycache__/
 .env
 codebuild_build.sh
 k8s.bak/
+secret.yaml
