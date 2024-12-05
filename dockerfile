@@ -4,7 +4,8 @@ FROM python:3.10-slim
 # Set the working directory
 WORKDIR /app
 
-# Install system dependencies for Python packages
+ENV PYTHONUNBUFFERED=1
+
 RUN apt-get update && apt-get install -y \
     build-essential \
     libssl-dev \
@@ -12,20 +13,10 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libxslt1-dev \
     zlib1g-dev \
-    pkg-config \
     libcairo2-dev \
-    cmake \
-    libgirepository1.0-dev \
-    libcairo2-dev \
-    libcairo-gobject2 \
-    libgirepository1.0-dev \
-    gobject-introspection \
     python3-dev \
-    python3-pip \
-    build-essential \
     git \
     && rm -rf /var/lib/apt/lists/*
-    
 
 # Upgrade pip, setuptools, and wheel
 RUN pip install --upgrade pip setuptools wheel
@@ -41,4 +32,4 @@ COPY . .
 EXPOSE 8000
 
 # Run the application
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]

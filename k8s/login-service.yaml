@@ -8,6 +8,6 @@ spec:
     app: local #loginpage
   ports:
     - protocol: TCP
-      port: 8080              # LoadBalancer listens on port 8081 for loginpage
-      nodePort: 30081
-  type: NodePort
+      port: 80              # LoadBalancer listens on port 8080 for loginpage
+      targetPort: 8000
+  type: LoadBalancer

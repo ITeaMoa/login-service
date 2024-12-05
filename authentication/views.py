@@ -164,13 +164,19 @@ def complete_signup_view(request):  # auth/complete-signup
             client = boto3.client('cognito-idp', region_name=AWS_REGION)
 
             # Update the user's attributes
-            client.admin_update_user_attributes(
-                UserPoolId=os.getenv('AWS_USER_POOL_ID'),  # Your User Pool ID
-                Username=email,
-                UserAttributes=[
-                    {'Name': 'nickname', 'Value': nickname},
-                ]
-            )
+            try:
+                client.admin_update_user_attributes(
+                    UserPoolId=AWS_USER_POOL_ID,
+                    Username=email,
+                    UserAttributes=[
+                        {'Name': 'nickname', 'Value': nickname},
+                    ]
+                )
+            except client.exceptions.UserNotFoundException:
+                return JsonResponse({'error': 'User not found in Cognito.'}, status=404)
+            except Exception as e:
+                return JsonResponse({'error': f'Failed to update user attributes: {str(e)}'}, status=500)
+
             
             # Set the new password
             client.admin_set_user_password(
@@ -195,15 +201,18 @@ def complete_signup_view(request):  # auth/complete-signup
             table = dynamodb.Table('IM_MAIN_TB')
 
             # Insert user info
-            table.put_item(
-                Item={
-                    'Pk': f"USER#{sub}",
-                    'Sk': f"INFO#",
-                    'email': email,
-                    'password': hashed_password, 
-                    'nickname': nickname,
-                }
-            )
+            try:
+                table.put_item(
+                    Item={
+                        'Pk': f"USER#{sub}",
+                        'Sk': f"INFO#",
+                        'email': email,
+                        'password': hashed_password,
+                        'nickname': nickname,
+                    }
+                )
+            except Exception as e:
+                return JsonResponse({'error': f'Failed to save user profile to DynamoDB: {str(e)}'}, status=500)
 
             return JsonResponse({'message': 'Signup completed successfully, profile added to DynamoDB!'}, status=201)
         

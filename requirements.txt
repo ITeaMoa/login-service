@@ -1,3 +1,5 @@
+boto3==1.35.63
+bcrypt==4.2.1
 cffi==1.17.1
 charset-normalizer==3.3.2
 cryptography==43.0.3
@@ -5,14 +7,6 @@ cytoolz==0.12.2
 decorator==5.1.1
 Django==5.1.2
 django-cors-headers==4.6.0
-eth-abi==4.2.1
-eth-account==0.10.0
-eth-hash==0.5.2
-eth-keyfile==0.6.1
-eth-keys==0.4.0
-eth-rlp==0.3.0
-eth-typing==3.5.2
-eth-utils==2.3.1
 executing==2.0.1
 fastjsonschema==2.19.0
 findspark==2.0.1
@@ -27,8 +21,8 @@ jmespath==1.0.1
 joblib==1.3.2
 jsonschema==4.20.0
 jsonschema-specifications==2023.11.1
-jupyter_core==5.5.0
-kaggle==1.5.16
+# jupyter_core==5.5.0
+# kaggle==1.5.16
 lru-dict==1.2.0
 matplotlib-inline==0.1.6
 multidict==6.0.4
@@ -48,7 +42,7 @@ pycairo==1.27.0
 pycparser==2.22
 pycryptodome==3.19.0
 Pygments==2.17.2
-PyGObject==3.50.0
+# PyGObject==3.50.0
 pyspark==3.5.0
 python-dateutil==2.9.0.post0
 python-dotenv==0.21.0
@@ -75,7 +69,6 @@ typing_extensions==4.8.0
 tzdata==2023.3
 urllib3==2.2.3
 wcwidth==0.2.12
-web3==6.11.3
 webencodings==0.5.1
 websockets==12.0
 yarl==1.9.3
