@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from dotenv import load_dotenv
 import boto3
+from boto3.dynamodb.conditions import Key
 import os
 import hmac
 import hashlib
@@ -48,6 +49,7 @@ def generate_valid_password(length=12):
 
 @csrf_exempt
 def email_verification_view(request):  # auth/verify-email
+    client = boto3.client('cognito-idp', region_name=AWS_REGION)
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -55,6 +57,15 @@ def email_verification_view(request):  # auth/verify-email
             if not email:
                 return JsonResponse({'error': 'Email is required.'}, status=400)
             
+            try:
+                client.admin_get_user(
+                    UserPoolId=AWS_USER_POOL_ID,
+                    Username=email
+                )
+                return JsonResponse({'error': 'Email is already registered.'}, status=409)
+            except client.exceptions.UserNotFoundException:
+                pass
+
             client_id = os.getenv('AWS_CLIENT_ID')
             client_secret = os.getenv('AWS_CLIENT_SECRET')
             if not client_secret:
@@ -76,8 +87,6 @@ def email_verification_view(request):  # auth/verify-email
             )
             
             return JsonResponse({'message': 'Verification code sent to email!'}, status=200)
-        except client.exceptions.UsernameExistsException:
-            return JsonResponse({'error': 'Email is already registered.'}, status=400)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     
@@ -137,7 +146,7 @@ def confirm_email_view(request):  # auth/confirm-email
             return JsonResponse({'error': 'User not found.'}, status=404)
         except client.exceptions.NotAuthorizedException as e:
             if 'User is already confirmed' in str(e):
-                return JsonResponse({'error': 'User is already confirmed.'}, status=400)
+                return JsonResponse({'error': 'User is already confirmed.'}, status=409)
             return JsonResponse({'error': 'Not authorized for this action.'}, status=403)
         except Exception as e:
             # Log unexpected errors for debugging
@@ -162,6 +171,14 @@ def complete_signup_view(request):  # auth/complete-signup
                 return JsonResponse({'error': 'Email, password, and nickname are required.'}, status=400)
             
             client = boto3.client('cognito-idp', region_name=AWS_REGION)
+            dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
+            table = dynamodb.Table('IM_MAIN_TB')
+            response = table.query(
+                IndexName='Nickname-index',  # Ensure a DynamoDB index exists for nickname
+                KeyConditionExpression=Key('nickname').eq(nickname)
+            )
+            if response['Items']:
+                return JsonResponse({'error': 'Nickname is already taken.'}, status=409)
 
             # Update the user's attributes
             try:
@@ -262,7 +279,7 @@ def signin_view(request):   # auth/signin
             if "User is disabled" in error_message:
                 return JsonResponse({'error': 'User is disabled.'}, status=403)
             elif "User is not confirmed" in error_message:
-                return JsonResponse({'error': 'User is not confirmed.'}, status=403)
+                return JsonResponse({'error': 'User is not confirmed.'}, status=402)
             else:
                 return JsonResponse({'error': 'Invalid username or password.'}, status=401)
             
