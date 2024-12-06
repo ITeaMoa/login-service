@@ -48,7 +48,7 @@ def generate_valid_password(length=12):
     return ''.join(random.sample(password, len(password)))
 
 @csrf_exempt
-def email_verification_view(request):  # auth/verify-email
+def email_verification_view(request):  # verify/email
     client = boto3.client('cognito-idp', region_name=AWS_REGION)
     if request.method == 'POST':
         try:
@@ -93,7 +93,7 @@ def email_verification_view(request):  # auth/verify-email
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
 @csrf_exempt
-def resend_confirmation_view(request):  # auth/resend-confirmation
+def resend_confirmation_view(request):  # verify/resend
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -121,7 +121,7 @@ def resend_confirmation_view(request):  # auth/resend-confirmation
 
 
 @csrf_exempt
-def confirm_email_view(request):  # auth/confirm-email
+def confirm_email_view(request):  # confirm/email
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -159,7 +159,42 @@ def hash_password(password):
     return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
 @csrf_exempt
-def complete_signup_view(request):  # auth/complete-signup
+def nickname_verification_view(request):  # verify/nickname
+    print(f"Request method: {request.method}")
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            print(f"Request body: {data}")
+            nickname = data['nickname']
+ 
+            if not nickname:
+                return JsonResponse({'error': 'Nickname are required.'}, status=400)
+            
+            # client = boto3.client('cognito-idp', region_name=AWS_REGION)
+            # response = client.list_users(
+            #     UserPoolId=AWS_USER_POOL_ID,
+            #     Filter=f'custom:nickname = "{nickname}"'
+            # )
+            # if response['Users']:
+            #     return JsonResponse({'error': 'Nickname is already taken.'}, status=409)
+            
+            dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
+            table = dynamodb.Table('IM_MAIN_TB')
+            response = table.query(
+                IndexName='Nickname-index',  # Ensure a DynamoDB index exists for nickname
+                KeyConditionExpression=Key('nickname').eq(nickname)
+            )
+            if response['Items']:
+                return JsonResponse({'error': 'Nickname is already taken.'}, status=409)
+            
+            return JsonResponse({'message': 'Nickname is available.'}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': f'Unexpected error: {str(e)}'}, status=500)
+    
+    return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
+@csrf_exempt
+def complete_signup_view(request):  # confirm/signup
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -169,24 +204,8 @@ def complete_signup_view(request):  # auth/complete-signup
             
             if not email or not password or not nickname:
                 return JsonResponse({'error': 'Email, password, and nickname are required.'}, status=400)
-            
-            client = boto3.client('cognito-idp', region_name=AWS_REGION)
-            response = client.list_users(
-                UserPoolId=AWS_USER_POOL_ID,
-                Filter=f'custom:nickname = "{nickname}"'
-            )
-            if response['Users']:
-                return JsonResponse({'error': 'Nickname is already taken.'}, status=409)
-            
-            # dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
-            # table = dynamodb.Table('IM_MAIN_TB')
-            # response = table.query(
-            #     IndexName='Nickname-index',  # Ensure a DynamoDB index exists for nickname
-            #     KeyConditionExpression=Key('nickname').eq(nickname)
-            # )
-            # if response['Items']:
-            #     return JsonResponse({'error': 'Nickname is already taken.'}, status=409)
 
+            client = boto3.client('cognito-idp', region_name=AWS_REGION)
             # Update the user's attributes
             try:
                 client.admin_update_user_attributes(
@@ -201,7 +220,6 @@ def complete_signup_view(request):  # auth/complete-signup
             except Exception as e:
                 return JsonResponse({'error': f'Failed to update user attributes: {str(e)}'}, status=500)
 
-            
             # Set the new password
             client.admin_set_user_password(
                 UserPoolId=AWS_USER_POOL_ID,
@@ -246,7 +264,7 @@ def complete_signup_view(request):  # auth/complete-signup
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
 @csrf_exempt
-def signin_view(request):   # auth/signin
+def signin_view(request):   # confirm/signin
     if request.method == 'POST':
         data = json.loads(request.body)  # Load JSON data from request body
         email = data.get('email')
@@ -301,7 +319,7 @@ def homepage_view(request):
     return render(request, 'homepage.html')
 
 @csrf_exempt
-def refresh_token_view(request):
+def refresh_token_view(request):    # verify/refresh
     if request.method == 'POST':
         data = json.loads(request.body)
         email = data.get('email')
