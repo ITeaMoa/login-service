@@ -4,6 +4,11 @@ FROM python:3.10-slim
 # Set the working directory
 WORKDIR /app
 
+ARG AWS_REGION
+ARG AWS_CLIENT_ID
+ARG AWS_CLIENT_SECRET
+ARG AWS_USER_POOL_ID
+
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV AWS_CLIENT_ID=${AWS_CLIENT_ID}
