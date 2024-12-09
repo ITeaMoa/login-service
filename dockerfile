@@ -11,6 +11,8 @@ ENV AWS_CLIENT_SECRET=${AWS_CLIENT_SECRET}
 ENV AWS_REGION=${AWS_DEFAULT_REGION}
 ENV AWS_USER_POOL_ID=${AWS_USER_POOL_ID}
 
+RUN echo "AWS_REGION is ${AWS_REGION}" 
+
 RUN apt-get update && apt-get install -y \
     python3-dev \
     git \
