@@ -17,6 +17,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 # # Load environment variables from the .env file
 # load_dotenv()
+print("AWS_REGION:", os.getenv('AWS_REGION'))
+print("AWS_USER_POOL_ID:", os.getenv('AWS_USER_POOL_ID'))
+print("AWS_CLIENT_ID:", os.getenv('AWS_CLIENT_ID'))
+print("AWS_CLIENT_SECRET:", os.getenv('AWS_CLIENT_SECRET'))
 
 # Now you can access the environment variables
 AWS_CLIENT_ID = os.getenv('AWS_CLIENT_ID')
