@@ -42,7 +42,7 @@ phases:
       - export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
       - export AWS_USER_POOL_ID=$AWS_USER_POOL_ID
       - echo AWS_CLIENT_ID
-      - echo AWS_DEFAULT_REGION
+      - echo ${AWS_DEFAULT_REGION}
 
       - export PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/share/pkgconfig
 
