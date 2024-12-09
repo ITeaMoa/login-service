@@ -16,7 +16,7 @@ import bcrypt
 from django.views.decorators.csrf import csrf_exempt
 
 # # Load environment variables from the .env file
-# load_dotenv()
+load_dotenv()
 print("AWS_REGION:", os.getenv('AWS_REGION'))
 print("AWS_USER_POOL_ID:", os.getenv('AWS_USER_POOL_ID'))
 print("AWS_CLIENT_ID:", os.getenv('AWS_CLIENT_ID'))
