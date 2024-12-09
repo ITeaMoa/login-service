@@ -4,7 +4,12 @@ FROM python:3.10-slim
 # Set the working directory
 WORKDIR /app
 
+# Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV AWS_CLIENT_ID=$AWS_CLIENT_ID
+ENV AWS_CLIENT_SECRET=$AWS_CLIENT_SECRET
+ENV AWS_REGION=$AWS_DEFAULT_REGION
+ENV AWS_USER_POOL_ID=$AWS_USER_POOL_ID
 
 RUN apt-get update && apt-get install -y \
     build-essential \
