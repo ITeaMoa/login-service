@@ -17,8 +17,7 @@ spec:
     spec:
       containers:
       - name: loginpage-service
-        image: login-page-local-1:latest #ghcr.io/brynnpark/login-test:latest #970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest # Use ECR
-        imagePullPolicy: Never
+        image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest #login-page-local-1:latest #ghcr.io/brynnpark/login-test:latest # Use ECR
         ports:
         - containerPort: 8000  # Check container's exposed port 
         env:
@@ -32,5 +31,7 @@ spec:
             secretKeyRef:
               name: aws-credentials
               key: AWS_SECRET_ACCESS_KEY
+      imagePullSecrets:
+      - name: ecr-secret
       # imagePullSecrets:
       # - name: ghcr-credentials

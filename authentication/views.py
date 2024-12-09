@@ -15,14 +15,14 @@ import random
 import bcrypt
 from django.views.decorators.csrf import csrf_exempt
 
-# Load environment variables from the .env file
-load_dotenv()
+# # Load environment variables from the .env file
+# load_dotenv()
 
 # Now you can access the environment variables
-AWS_CLIENT_ID = os.getenv('AWS_CLIENT_ID')
-AWS_CLIENT_SECRET =os.getenv('AWS_CLIENT_SECRET')
-AWS_REGION = os.getenv('AWS_REGION')
-AWS_USER_POOL_ID = os.getenv('AWS_USER_POOL_ID')
+# AWS_CLIENT_ID = os.getenv('AWS_CLIENT_ID')
+# AWS_CLIENT_SECRET =os.getenv('AWS_CLIENT_SECRET')
+# AWS_REGION = os.getenv('AWS_REGION')
+# AWS_USER_POOL_ID = os.getenv('AWS_USER_POOL_ID')
 
 def calculate_secret_hash(client_id, client_secret, username):
     message = username + client_id
