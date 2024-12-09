@@ -6,19 +6,12 @@ WORKDIR /app
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-ENV AWS_CLIENT_ID=$AWS_CLIENT_ID
-ENV AWS_CLIENT_SECRET=$AWS_CLIENT_SECRET
-ENV AWS_REGION=$AWS_DEFAULT_REGION
-ENV AWS_USER_POOL_ID=$AWS_USER_POOL_ID
+ENV AWS_CLIENT_ID=${AWS_CLIENT_ID}
+ENV AWS_CLIENT_SECRET=${AWS_CLIENT_SECRET}
+ENV AWS_REGION=${AWS_DEFAULT_REGION}
+ENV AWS_USER_POOL_ID=${AWS_USER_POOL_ID}
 
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libssl-dev \
-    libffi-dev \
-    libxml2-dev \
-    libxslt1-dev \
-    zlib1g-dev \
-    libcairo2-dev \
     python3-dev \
     git \
     && rm -rf /var/lib/apt/lists/*
