@@ -90,19 +90,19 @@ phases:
       - echo Pushing the Docker image...
       - docker push $IMAGE_REPO_NAME:$IMAGE_TAG
 
-      # # # Setup kubectl with our EKS Cluster
-      # - echo "Setting up kubectl for EKS Cluster iteamoa..."
-      # - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2
+      # # Setup kubectl with our EKS Cluster
+      - echo "Setting up kubectl for EKS Cluster iteamoa..."
+      - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2
 
-      # # Export AWS credentials to environment variables
-      # - export KUBECONFIG=/root/.kube/config
+      # Export AWS credentials to environment variables
+      - export KUBECONFIG=/root/.kube/config
       
 
-      # # Deploy the latest image to the EKS cluster using Kubernetes manifests
-      # - echo "Applying deployment and service files to the cluster..."
-      # - kubectl apply -f k8s/login-service-deployment.yaml -n loginpage-namespace
-      # - kubectl apply -f k8s/login-service.yaml -n loginpage-namespace
+      # Deploy the latest image to the EKS cluster using Kubernetes manifests
+      - echo "Applying deployment and service files to the cluster..."
+      - kubectl apply -f k8s/login-service-deployment.yaml -n loginpage-namespace
+      - kubectl apply -f k8s/login-service.yaml -n loginpage-namespace
 
-      # # Optionally, confirm that the deployment was successful
-      # - echo "Deployment applied. Verifying pods..."
-      # - kubectl get pods -n loginpage-namespace
+      # Optionally, confirm that the deployment was successful
+      - echo "Deployment applied. Verifying pods..."
+      - kubectl get pods -n loginpage-namespace

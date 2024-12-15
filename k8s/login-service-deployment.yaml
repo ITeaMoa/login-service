@@ -2,36 +2,36 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: login-service-deployment
-  namespace: login-local-namespace #loginpage-namespace
+  namespace: login-namespace #loginpage-namespace
   labels:
-    app: local #fargate
+    app: fargate #fargate
 spec:
-  replicas: 1  # Two pods running the service
+  replicas: 2  # Two pods running the service
   selector:
     matchLabels:
-      app: local
+      app: fargate
   template:
     metadata:
      labels:
-      app: local
+      app: fargate
     spec:
       containers:
-      - name: loginpage-service
+      - name: login-service
         image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest #login-page-local-1:latest #ghcr.io/brynnpark/login-test:latest # Use ECR
         ports:
         - containerPort: 8000  # Check container's exposed port 
-        env:
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: aws-credentials
-              key: AWS_ACCESS_KEY_ID
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: aws-credentials
-              key: AWS_SECRET_ACCESS_KEY
-        imagePullPolicy: IfNotPresent
+        # env:
+        # - name: AWS_ACCESS_KEY_ID
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: aws-credentials
+        #       key: AWS_ACCESS_KEY_ID
+        # - name: AWS_SECRET_ACCESS_KEY
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: aws-credentials
+        #       key: AWS_SECRET_ACCESS_KEY
+        # imagePullPolicy: IfNotPresent
       # imagePullSecrets:
       # - name: ecr-secret
       # imagePullSecrets:
