@@ -125,10 +125,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AWS_COGNITO_REGION = 'ap-northeast-2'
-AWS_COGNITO_USER_POOL_ID = 'your-user-pool-id'
-AWS_COGNITO_APP_CLIENT_ID = 'your-app-client-id'
-AWS_COGNITO_APP_CLIENT_SECRET = 'your-app-client-secret'
+# AWS_COGNITO_REGION = 'ap-northeast-2'
+# AWS_COGNITO_USER_POOL_ID = 'your-user-pool-id'
+# AWS_COGNITO_APP_CLIENT_ID = 'your-app-client-id'
+# AWS_COGNITO_APP_CLIENT_SECRET = 'your-app-client-secret'
 
 CORS_ALLOWED_ORIGINS = [
     "http://iteamoa-frontend.s3-website.ap-northeast-2.amazonaws.com",

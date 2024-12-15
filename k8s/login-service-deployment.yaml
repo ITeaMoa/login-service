@@ -31,7 +31,8 @@ spec:
             secretKeyRef:
               name: aws-credentials
               key: AWS_SECRET_ACCESS_KEY
-      imagePullSecrets:
-      - name: ecr-secret
+        imagePullPolicy: IfNotPresent
+      # imagePullSecrets:
+      # - name: ecr-secret
       # imagePullSecrets:
       # - name: ghcr-credentials
