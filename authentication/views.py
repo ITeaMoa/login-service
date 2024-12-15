@@ -16,7 +16,7 @@ import bcrypt
 from django.views.decorators.csrf import csrf_exempt
 
 # # Load environment variables from the .env file
-load_dotenv()
+# load_dotenv()
 # print("AWS_REGION:", os.getenv('AWS_REGION'))
 # print("AWS_USER_POOL_ID:", os.getenv('AWS_USER_POOL_ID'))
 # print("AWS_CLIENT_ID:", os.getenv('AWS_CLIENT_ID'))
@@ -32,32 +32,32 @@ AWS_USER_POOL_ID = os.getenv('AWS_USER_POOL_ID')
 if not all([AWS_CLIENT_ID, AWS_CLIENT_SECRET, AWS_REGION, AWS_USER_POOL_ID]):
     raise ValueError("One or more required environment variables are missing")
 
-client = boto3.client('codebuild', region_name=AWS_REGION)
-response = client.start_build(
-    projectName="iteamoa-loginpage",
-    environmentVariablesOverride=[
-        {
-            "name": "AWS_CLIENT_ID",
-            "type": "PLAINTEXT",
-            "value": AWS_CLIENT_ID  # Dynamically fetched value
-        },
-        {
-            "name": "AWS_CLIENT_SECRET",
-            "type": "PLAINTEXT",
-            "value": AWS_CLIENT_SECRET  # Dynamically fetched value
-        },
-        {
-            "name": "AWS_REGION",
-            "type": "PLAINTEXT",
-            "value": AWS_REGION
-        },
-        {
-            "name": "AWS_USER_POOL_ID",
-            "type": "PLAINTEXT",
-            "value": AWS_USER_POOL_ID
-        }
-    ]
-)
+# cb_client = boto3.client('codebuild', region_name=AWS_REGION)
+# response = cb_client.start_build(
+#     projectName="iteamoa-loginpage",
+#     environmentVariablesOverride=[
+#         {
+#             "name": "AWS_CLIENT_ID",
+#             "type": "PLAINTEXT",
+#             "value": AWS_CLIENT_ID  # Dynamically fetched value
+#         },
+#         {
+#             "name": "AWS_CLIENT_SECRET",
+#             "type": "PLAINTEXT",
+#             "value": AWS_CLIENT_SECRET  # Dynamically fetched value
+#         },
+#         {
+#             "name": "AWS_REGION",
+#             "type": "PLAINTEXT",
+#             "value": AWS_REGION
+#         },
+#         {
+#             "name": "AWS_USER_POOL_ID",
+#             "type": "PLAINTEXT",
+#             "value": AWS_USER_POOL_ID
+#         }
+#     ]
+# )
 
 def calculate_secret_hash(client_id, client_secret, username):
     message = username + client_id

@@ -4,6 +4,9 @@ phases:
   install:
     runtime-versions:
       python: 3.10
+    cache:
+    paths:
+      - '/root/.cache/pip/**'
     commands:
       # Verify AWS CLI
       - echo "Verifying AWS CLI installation..."
@@ -30,21 +33,18 @@ phases:
       # # Install dependencies
       - echo "Installing dependencies..."
       - yum groupinstall -y "Development Tools"
-      # - sudo yum install -y python3-devel cairo cairo-devel cairo-gobject gobject-introspection-devel libffi-devel
-      # - yum install -y meson ninja-build
-      # - yum install -y cmake
 
   pre_build:
     commands:
       # Export AWS credentials
-      - export AWS_CLIENT_ID=$AWS_CLIENT_ID
-      - export AWS_CLIENT_SECRET=$AWS_CLIENT_SECRET
-      - export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
-      - export AWS_USER_POOL_ID=$AWS_USER_POOL_ID
-      - echo ${AWS_DEFAULT_REGION}
-      - echo ${AWS_CLIENT_ID}
+      # - export AWS_CLIENT_ID=$AWS_CLIENT_ID
+      # - export AWS_CLIENT_SECRET=$AWS_CLIENT_SECRET
+      # - export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+      # - export AWS_USER_POOL_ID=$AWS_USER_POOL_ID
+      # - echo ${AWS_DEFAULT_REGION}
+      # - echo ${AWS_CLIENT_ID}
 
-      - export PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/share/pkgconfig
+      # - export PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/share/pkgconfig
 
       # Login to ECR Registry for docker to push the image to ECR Repository
       - echo "Logging in to Amazon ECR..."
