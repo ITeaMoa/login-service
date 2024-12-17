@@ -100,9 +100,9 @@ phases:
 
       # # Deploy the latest image to the EKS cluster using Kubernetes manifests
       # - echo "Applying deployment and service files to the cluster..."
-      # - kubectl apply -f k8s/login-service-deployment.yaml -n loginpage-namespace
-      # - kubectl apply -f k8s/login-service.yaml -n loginpage-namespace
+      # - kubectl apply -f k8s/login-service-deployment.yaml -n login-namespace
+      # - kubectl apply -f k8s/login-service.yaml -n login-namespace
 
       # # Optionally, confirm that the deployment was successful
       # - echo "Deployment applied. Verifying pods..."
-      # - kubectl get pods -n loginpage-namespace
+      # - kubectl get pods -n login-namespace
