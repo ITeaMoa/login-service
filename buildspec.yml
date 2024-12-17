@@ -83,12 +83,10 @@ phases:
       - docker push $IMAGE_REPO_NAME:$IMAGE_TAG
 
       # Export AWS credentials to environment variables
-      - echo "Assuming IAM role..."
-      - ROLE_ARN="arn:aws:iam::970547342771:role/codebuild-iteamoa-loginpage-service-role"
-      - CREDENTIALS=$(aws sts assume-role --role-arn $ROLE_ARN --role-session-name CodeBuildSession)
-      - export AWS_ACCESS_KEY_ID=$(echo $CREDENTIALS | jq -r .Credentials.AccessKeyId)
-      - export AWS_SECRET_ACCESS_KEY=$(echo $CREDENTIALS | jq -r .Credentials.SecretAccessKey)
-      - export AWS_SESSION_TOKEN=$(echo $CREDENTIALS | jq -r .Credentials.SessionToken)
+      - export KUBECONFIG=/root/.kube/config
+      - export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
+      - export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
+      - export AWS_SESSION_TOKEN=$(aws configure get aws_session_token)
       - echo "AWS credentials updated."
 
       # - export KUBECONFIG=/root/.kube/config
