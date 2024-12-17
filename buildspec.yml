@@ -19,8 +19,6 @@ phases:
       # Delete the AWS CLI cache folder
       - rm -rf ~/.aws/cli/cache
 
-      - yum install -y jq
-
       # Install kubectl
       - echo "Installing kubectl..."
       - curl -LO https://dl.k8s.io/release/v1.27.2/bin/linux/amd64/kubectl   
@@ -91,7 +89,7 @@ phases:
       # # Setup kubectl with our EKS Cluster
       - echo "Setting up kubectl for EKS Cluster iteamoa..."
       - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2
-      - aws eks update-kubeconfig --region ap-northeast-2 --name iteamoa --role-arn arn:aws:iam::$AWS_ACCOUNT_ID:role/codebuild-iteamoa-loginpage-service-role
+      - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2 --role-arn arn:aws:iam::970547342771:role/codebuild-iteamoa-loginpage-service-role
 
       - echo "Checking kubeconfig context..."
       - kubectl config current-context
