@@ -6,7 +6,7 @@ metadata:
   labels:
     app: fargate #fargate
 spec:
-  replicas: 2  # Two pods running the service
+  replicas: 1  # Two pods running the service
   selector:
     matchLabels:
       app: fargate
