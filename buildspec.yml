@@ -89,7 +89,7 @@ phases:
       # # Setup kubectl with our EKS Cluster
       - echo "Setting up kubectl for EKS Cluster iteamoa..."
       - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2
-      - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2 --role-arn arn:aws:iam::970547342771:role/codebuild-iteamoa-loginpage-service-role
+      # - aws eks update-kubeconfig --name iteamoa --region ap-northeast-2 --role-arn arn:aws:iam::970547342771:role/codebuild-iteamoa-loginpage-service-role
 
       - echo "Checking kubeconfig context..."
       - kubectl config current-context
