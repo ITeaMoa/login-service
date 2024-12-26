@@ -43,6 +43,8 @@ phases:
 
   build:
     commands:
+      - cd demo
+      
       # Set up image repository details
       - IMAGE_REPO_NAME=$AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login
       - IMAGE_TAG=latest

@@ -10,4 +10,4 @@ spec:
     - protocol: TCP
       port: 80              # LoadBalancer listens on port 8080 for loginpage
       targetPort: 8000
-  type: LoadBalancer
+  type: ClusterIP

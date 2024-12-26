@@ -5,13 +5,13 @@ metadata:
   namespace: login-namespace
   annotations:
     kubernetes.io/ingress.class: "alb"
-    alb.ingress.kubernetes.io/certificate-arn: 
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:970547342771:certificate/18af3371-114a-43ca-87e4-f7328d131f67
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
     alb.ingress.kubernetes.io/load-balancer-name: "iteamoa-alb"
     alb.ingress.kubernetes.io/group.name: "backend-api"  
-    alb.ingress.kubernetes.io/healthcheck-path: "/health/"
+    alb.ingress.kubernetes.io/healthcheck-path: "/"
 spec:
   ingressClassName: alb
   rules:
@@ -25,4 +25,3 @@ spec:
             name: login-service
             port:
               number: 80
-      
