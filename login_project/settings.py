@@ -135,8 +135,9 @@ CORS_ALLOWED_ORIGINS = [
     # "https://localhost:3000",  # Optional: for local testing
     # "https://iteamoa-api.brynnpark.cloud",
     # "http://iteamoa-frontend.s3-website.ap-northeast-2.amazonaws.com"
-    "*"
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins
 
 CORS_ALLOW_METHODS = [
     "GET",
