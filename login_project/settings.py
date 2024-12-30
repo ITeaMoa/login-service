@@ -131,8 +131,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # AWS_COGNITO_APP_CLIENT_SECRET = 'your-app-client-secret'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://iteamoa.brynnpark.cloud",
-    "http://localhost:3000",  # Optional: for local testing
+    "https://iteamoa.brynnpark.cloud",
+    "https://localhost:3000",  # Optional: for local testing
+    "https://iteamoa-api.brynnpark.cloud"
 ]
 
 CORS_ALLOW_METHODS = [
