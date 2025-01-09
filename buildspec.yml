@@ -99,6 +99,10 @@ phases:
       - kubectl apply -f k8s/login-service-deployment.yaml -n login-namespace
       - kubectl apply -f k8s/login-service.yaml -n login-namespace
 
+      # Force a restart to ensure the deployment picks up the new image
+      - echo "Forcing deployment rollout to apply the new image..."
+      - kubectl rollout restart deployment login-service-deployment -n login-namespace
+
       # Optionally, confirm that the deployment was successful
       - echo "Deployment applied. Verifying pods..."
       - kubectl get pods -n login-namespace
