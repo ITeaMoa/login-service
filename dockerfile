@@ -16,10 +16,7 @@ ENV AWS_CLIENT_SECRET=$AWS_CLIENT_SECRET
 ENV AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
 ENV AWS_USER_POOL_ID=$AWS_USER_POOL_ID
 
-RUN apt-get update && apt-get install -y \
-    python3-dev \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+
 
 # Upgrade pip, setuptools, and wheel
 RUN pip install --upgrade pip setuptools wheel
