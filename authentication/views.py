@@ -1,21 +1,21 @@
+import os
 import json
+import random
+import string
+import time
+from datetime import datetime
 from django.shortcuts import render, redirect
-from .cognito_helper import signup_user, signin_user
 from django.http import JsonResponse
 from django.urls import reverse
-from dotenv import load_dotenv
+from django.views.decorators.csrf import csrf_exempt
 import boto3
 from boto3.dynamodb.conditions import Key
-import os
+import bcrypt
 import hmac
 import hashlib
 import base64
-import string
-import random
-import bcrypt
-from django.views.decorators.csrf import csrf_exempt
+from .cognito_helper import signup_user, signin_user
 
-# Now you can access the environment variables
 AWS_CLIENT_ID = os.getenv('AWS_CLIENT_ID')
 AWS_CLIENT_SECRET =os.getenv('AWS_CLIENT_SECRET')
 AWS_REGION = os.getenv('AWS_DEFAULT_REGION')
@@ -270,6 +270,10 @@ def complete_signup_view(request):  # confirm/signup
             dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
             table = dynamodb.Table('IM_MAIN_TB')
 
+            # Generate a precise timestamp
+            current_time = time.time_ns()  # Current time in nanoseconds
+            timestamp = datetime.fromtimestamp(current_time / 1e9).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]  # Nanosecond precision
+
             # Insert user info
             try:
                 table.put_item(
@@ -279,6 +283,8 @@ def complete_signup_view(request):  # confirm/signup
                         'email': email,
                         'password': hashed_password,
                         'nickname': nickname,
+                        'entityType': 'USER',
+                        'timestamp': timestamp
                     }
                 )
             except Exception as e:
