@@ -279,7 +279,7 @@ def complete_signup_view(request):  # confirm/signup
                 table.put_item(
                     Item={
                         'Pk': f"USER#{sub}",
-                        'Sk': f"INFO#",
+                        'Sk': f"PROFILE#",
                         'email': email,
                         'password': hashed_password,
                         'nickname': nickname,
