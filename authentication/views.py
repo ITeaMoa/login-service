@@ -285,7 +285,7 @@ def complete_signup_view(request):  # confirm/signup
                         'nickname': nickname,
                         'entityType': 'USER',
                         'timestamp': timestamp,
-                        'userStatus': 'ACTIVE'
+                        'userStatus': True
                     }
                 )
             except Exception as e:
@@ -434,12 +434,24 @@ def delete_user_view(request):           # delete-user
                 },
                 UpdateExpression="SET userStatus = :val",
                 ExpressionAttributeValues={
-                    ':val': 'INACTIVE' #False
+                    ':val': False
                 },
                 ReturnValues="UPDATED_NEW"
             )
 
-            return JsonResponse({'message': 'User deleted successfully'}, status=204)
+            try:
+                # Invoke Lambda to update all related items
+                lambda_client = boto3.client('lambda', region_name=AWS_REGION)
+                result = lambda_client.invoke(
+                    FunctionName='DeactivateUserStatusLambda',
+                    InvocationType='Event',
+                    Payload=json.dumps({'uid': user_id})
+                )
+            except Exception as e:
+                return JsonResponse({'error': f'Unexpected error: {str(e)}'}, status=500)
+
+            return JsonResponse({'message': 'User deleted from Cognito and userStatus update triggered'}, status=200)
+
         except client.exceptions.UserNotFoundException:
             return JsonResponse({'error': 'User not found in Cognito'}, status=404)
         except Exception as e:
