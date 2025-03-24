@@ -284,7 +284,8 @@ def complete_signup_view(request):  # confirm/signup
                         'password': hashed_password,
                         'nickname': nickname,
                         'entityType': 'USER',
-                        'timestamp': timestamp
+                        'timestamp': timestamp,
+                        'userStatus': 'ACTIVE'
                     }
                 )
             except Exception as e:
@@ -402,3 +403,44 @@ def refresh_token_view(request):    # verify/refresh
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
+@csrf_exempt
+def delete_user_view(request):           # delete-user
+    if request.method == 'DELETE':
+        data = json.loads(request.body)  # Load JSON data from request body
+        user_id = data.get('uid')
+        try:
+            client = boto3.client('cognito-idp', region_name=AWS_REGION)
+
+            # cognito user diasbled
+            client.admin_disable_user(
+                UserPoolId=AWS_USER_POOL_ID,
+                Username=user_id
+            )
+
+            # 탈퇴해도 비활성화만 하고, 일단 cognito 삭제는 하지 않음
+            # client.admin_delete_user(
+            #     UserPoolId=AWS_USER_POOL_ID,
+            #     Username=user_id
+            # )
+
+            # dynamodb user deletion
+            dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
+            table = dynamodb.Table('IM_MAIN_TB')
+            response = table.update_item(
+                Key={
+                    'Pk': f"USER#{user_id}",
+                    'Sk': f"PROFILE#"
+                },
+                UpdateExpression="SET userStatus = :val",
+                ExpressionAttributeValues={
+                    ':val': 'INACTIVE' #False
+                },
+                ReturnValues="UPDATED_NEW"
+            )
+
+            return JsonResponse({'message': 'User deleted successfully'}, status=204)
+        except client.exceptions.UserNotFoundException:
+            return JsonResponse({'error': 'User not found in Cognito'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': f'Unexpected error: {str(e)}'}, status=500)
