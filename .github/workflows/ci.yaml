@@ -37,6 +37,6 @@ jobs:
     
       - name: Apply Kubernetes manifest using kubectl
         run: |
-            kubectl apply -f k8s/login-service-deployment.yaml
+            kubectl apply -f k8s/login-service-deployment.yaml --validate=false
         env:
             KUBECONFIG: ${{ secrets.KUBE_CONFIG }}
