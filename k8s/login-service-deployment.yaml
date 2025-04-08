@@ -42,7 +42,8 @@ spec:
       labels:
         svc: login
     spec:
-      serviceAccountName: argo-ecr-role 
+      imagePullSecrets:
+        - name: ecr-registry-secret  # Secret to authenticate with ECR
       containers:
         - name: login-service
           image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest
