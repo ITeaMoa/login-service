@@ -25,6 +25,13 @@
 #         ports:
 #         - containerPort: 8000  # Check container's exposed port 
 
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argo-ecr-role
+  namespace: login-namespace
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
