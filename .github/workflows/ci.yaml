@@ -30,3 +30,13 @@ jobs:
       - name: Push Docker image to ECR
         run: |
           docker push 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:${{ github.sha }}
+          
+      - name: Update Kubernetes deployment manifest with the new image tag
+        run: |
+            sed -i "s#970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest#970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:${{ github.sha }}#g" k8s/login-service-deployment.yaml
+    
+      - name: Apply Kubernetes manifest using kubectl
+        run: |
+            kubectl apply -f k8s/login-service-deployment.yaml
+        env:
+            KUBECONFIG: ${{ secrets.KUBE_CONFIG }}
