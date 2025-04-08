@@ -44,6 +44,6 @@ spec:
     spec:
       containers:
         - name: login-service
-          image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:${GITHUB_SHA} # Replace with the GitHub Actions tag
+          image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:${{ github.sha }}
           ports:
             - containerPort: 8000
