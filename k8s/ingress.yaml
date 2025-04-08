@@ -1,27 +1,47 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: login-ingress
-  namespace: login-namespace
-  annotations:
-    kubernetes.io/ingress.class: "alb"
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:970547342771:certificate/18af3371-114a-43ca-87e4-f7328d131f67
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
-    alb.ingress.kubernetes.io/load-balancer-name: "iteamoa-alb"
-    alb.ingress.kubernetes.io/group.name: "backend-api"  
-    alb.ingress.kubernetes.io/healthcheck-path: "/"
-spec:
-  ingressClassName: alb
-  rules:
-  - host: iteamoa-api.brynnpark.cloud
-    http:
-      paths:
-      - path: /login
-        pathType: Prefix
-        backend:
-          service:
-            name: login-service
-            port:
-              number: 80
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: login-ingress
+#   namespace: login-namespace
+#   annotations:
+#     kubernetes.io/ingress.class: "alb"
+#     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:970547342771:certificate/18af3371-114a-43ca-87e4-f7328d131f67
+#     alb.ingress.kubernetes.io/scheme: internet-facing
+#     alb.ingress.kubernetes.io/target-type: ip
+#     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+#     alb.ingress.kubernetes.io/load-balancer-name: "iteamoa-alb"
+#     alb.ingress.kubernetes.io/group.name: "backend-api"  
+#     alb.ingress.kubernetes.io/healthcheck-path: "/"
+# spec:
+#   ingressClassName: alb
+#   rules:
+#   - host: iteamoa-api.brynnpark.cloud
+#     http:
+#       paths:
+#       - path: /login
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: login-service
+#             port:
+#               number: 80
+
+
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: login-ingress
+#   namespace: login-namespace
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /  
+#   rules:
+#   - host: api.iteamoa.brynnpark.cloud  
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: login-service
+#             port:
+#               number: 80

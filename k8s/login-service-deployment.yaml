@@ -1,26 +1,49 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: login-service-deployment
+#   namespace: login-namespace 
+#   labels:
+#     app: fargate
+#     svc: login
+# spec:
+#   replicas: 1  # pods running the service
+#   selector:
+#     matchLabels:
+#       app: fargate
+#       svc: login
+#   template:
+#     metadata:
+#      labels:
+#       app: fargate
+#       svc: login
+#     spec:
+#       serviceAccountName: login-service-sa  # Attach the IAM role via IRSA
+#       containers:
+#       - name: login-service
+#         image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest #login-page-local-1:latest #ghcr.io/brynnpark/login-test:latest # Use ECR
+#         ports:
+#         - containerPort: 8000  # Check container's exposed port 
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: login-service-deployment
-  namespace: login-namespace 
+  namespace: login-namespace
   labels:
-    app: fargate
     svc: login
 spec:
-  replicas: 1  # pods running the service
+  replicas: 1
   selector:
     matchLabels:
-      app: fargate
       svc: login
   template:
     metadata:
-     labels:
-      app: fargate
-      svc: login
+      labels:
+        svc: login
     spec:
-      serviceAccountName: login-service-sa  # Attach the IAM role via IRSA
       containers:
-      - name: login-service
-        image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest #login-page-local-1:latest #ghcr.io/brynnpark/login-test:latest # Use ECR
-        ports:
-        - containerPort: 8000  # Check container's exposed port 
+        - name: login-service
+          image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:${GITHUB_SHA} # Replace with the GitHub Actions tag
+          ports:
+            - containerPort: 8000
