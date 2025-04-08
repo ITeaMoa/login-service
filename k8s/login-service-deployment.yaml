@@ -42,6 +42,7 @@ spec:
       labels:
         svc: login
     spec:
+      serviceAccountName: argo-ecr-role 
       containers:
         - name: login-service
           image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest
