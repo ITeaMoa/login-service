@@ -48,4 +48,4 @@ spec:
           ports:
             - containerPort: 8000
       imagePullSecrets:
-        - name: ecr-registry-secret  # Secret to authenticate with ECR
+        - name: ecr-secret  # Secret to authenticate with ECR

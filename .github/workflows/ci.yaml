@@ -22,15 +22,12 @@ jobs:
 
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
-        with:
-          region: ${{ secrets.AWS_REGION }}
-
 
       - name: Build Docker image
         run: |
-          docker build -t 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest .
+          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest .
       
       - name: Push Docker image to ECR
         run: |
-          docker push 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest
         
