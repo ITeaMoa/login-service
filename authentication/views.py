@@ -18,7 +18,7 @@ from .cognito_helper import signup_user, signin_user
 
 AWS_CLIENT_ID = os.environ.get("AWS_CLIENT_ID")
 AWS_CLIENT_SECRET = os.environ.get("AWS_CLIENT_SECRET")
-AWS_REGION = os.environ.get("AWS_REGION")
+AWS_REGION = os.environ.get("AWS_DEFAULT_REGION")
 AWS_USER_POOL_ID = os.environ.get("AWS_USER_POOL_ID")
 
 # Validation
