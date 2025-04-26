@@ -33,21 +33,17 @@ metadata:
   name: login-ingress
   namespace: login-namespace
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-    nginx.ingress.kubernetes.io/proxy-body-size: "512m"
-    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
+  ingressClassName: nginx 
   rules:
-  - host: "api-iteamoa.brynnpark.cloud"  
-    http:
-      paths:
-      - path: /login
-        pathType: Prefix
-        backend:
-          service:
-            name: login-service
-            port:
-              number: 80
+    - host: api-iteamoa.brynnpark.cloud
+      http:
+        paths:
+        - path: /login
+          pathType: Prefix
+          backend:
+            service:
+              name: login-service
+              port:
+                number: 80
