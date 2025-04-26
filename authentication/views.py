@@ -24,6 +24,7 @@ AWS_USER_POOL_ID = os.environ["AWS_USER_POOL_ID"]
 
 # Validation
 if not all([AWS_CLIENT_ID, AWS_CLIENT_SECRET, AWS_REGION, AWS_USER_POOL_ID]):
+    print(AWS_REGION)
     raise ValueError("One or more required environment variables are missing")
 
 # cb_client = boto3.client('codebuild', region_name=AWS_REGION)
