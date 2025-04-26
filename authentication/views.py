@@ -76,6 +76,12 @@ def generate_valid_password(length=12):
     return ''.join(random.sample(password, len(password)))
 
 @csrf_exempt
+def test_return(request):  # /
+    if request.method == 'GET':
+        return JsonResponse({'message': 'Hello, this is a test response!'}, status=200)
+
+
+@csrf_exempt
 def email_verification_view(request):  # verify/email
     client = boto3.client('cognito-idp', region_name=AWS_REGION)
     if request.method == 'POST':

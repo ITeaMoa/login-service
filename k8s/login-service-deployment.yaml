@@ -28,7 +28,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: login-service-deployment
+  name: login-deployment
   namespace: login-namespace
   labels:
     svc: login
