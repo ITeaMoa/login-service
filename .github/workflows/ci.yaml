@@ -26,12 +26,11 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-          --build-arg AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }} \
-          --build-arg AWS_DYNAMODB_TABLE=${{ secrets.AWS_DYNAMODB_TABLE }} \
-          --build-arg AWS_CLIENT_ID=${{ secrets.AWS_CLIENT_ID }} \
-          --build-arg AWS_CLIENT_SECRET=${{ secrets.AWS_CLIENT_SECRET }} \
-          --build-arg AWS_USER_POOL_ID=${{ secrets.AWS_USER_POOL_ID }} \
-          -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest .
+            --build-arg AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }} \
+            --build-arg AWS_CLIENT_ID=${{ secrets.AWS_CLIENT_ID }} \
+            --build-arg AWS_CLIENT_SECRET=${{ secrets.AWS_CLIENT_SECRET }} \
+            --build-arg AWS_USER_POOL_ID=${{ secrets.AWS_USER_POOL_ID }} \
+            -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest .
       
       - name: Push Docker image to ECR
         run: |
