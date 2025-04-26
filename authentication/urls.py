@@ -11,5 +11,5 @@ urlpatterns = [
     path('confirm/signup', views.complete_signup_view, name='signup'),
     path('confirm/signin', views.signin_view, name='signin'),
     path('verify/refresh', views.refresh_token_view, name='refresh-token'),
-    path('/test', views.test_return, name='test_return'),
+    path('test/', views.test_return, name='test_return'),
 ]
