@@ -36,7 +36,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: "api.iteamoa.brynnpark.cloud"  
+  - host: "api-iteamoa.brynnpark.cloud"  
     http:
       paths:
       - path: /login
