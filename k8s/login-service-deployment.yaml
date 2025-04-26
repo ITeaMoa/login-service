@@ -47,10 +47,5 @@ spec:
           image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:latest
           ports:
             - containerPort: 8000
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 80
-            initialDelaySeconds: 30
       imagePullSecrets:
         - name: ecr-secret  # Secret to authenticate with ECR
