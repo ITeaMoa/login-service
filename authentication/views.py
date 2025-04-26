@@ -80,6 +80,7 @@ def generate_valid_password(length=12):
 @csrf_exempt
 def test_return(request):  # test
     if request.method == 'GET':
+        print("Test endpoint hit")
         return JsonResponse({'message': 'Hello, this is a test response!'}, status=200)
 
 
