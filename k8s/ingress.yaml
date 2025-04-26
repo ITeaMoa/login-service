@@ -31,7 +31,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: login-ingress
-  namespace: default
+  namespace: login-namespace
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
