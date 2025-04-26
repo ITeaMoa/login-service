@@ -78,7 +78,7 @@ def generate_valid_password(length=12):
     return ''.join(random.sample(password, len(password)))
 
 @csrf_exempt
-def test_return(request):  # /
+def test_return(request):  # /test
     if request.method == 'GET':
         return JsonResponse({'message': 'Hello, this is a test response!'}, status=200)
 
