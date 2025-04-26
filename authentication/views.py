@@ -21,6 +21,9 @@ AWS_CLIENT_SECRET = os.environ.get("AWS_CLIENT_SECRET")
 AWS_REGION = os.environ.get("AWS_DEFAULT_REGION")
 AWS_USER_POOL_ID = os.environ.get("AWS_USER_POOL_ID")
 
+print("AWS_DEFAULT_REGION:", os.environ.get("AWS_DEFAULT_REGION"))
+
+
 # Validation
 if not all([AWS_CLIENT_ID, AWS_CLIENT_SECRET, AWS_REGION, AWS_USER_POOL_ID]):
     raise ValueError("One or more required environment variables are missing")
