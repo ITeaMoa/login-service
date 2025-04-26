@@ -16,10 +16,10 @@ import hashlib
 import base64
 from .cognito_helper import signup_user, signin_user
 
-AWS_CLIENT_ID = os.getenv('AWS_CLIENT_ID')
-AWS_CLIENT_SECRET =os.getenv('AWS_CLIENT_SECRET')
-AWS_REGION = os.getenv('AWS_DEFAULT_REGION')
-AWS_USER_POOL_ID = os.getenv('AWS_USER_POOL_ID')
+# AWS_CLIENT_ID = os.getenv('AWS_CLIENT_ID')
+# AWS_CLIENT_SECRET =os.getenv('AWS_CLIENT_SECRET')
+# AWS_REGION = os.getenv('AWS_DEFAULT_REGION')
+# AWS_USER_POOL_ID = os.getenv('AWS_USER_POOL_ID')
 
 # Validation
 if not all([AWS_CLIENT_ID, AWS_CLIENT_SECRET, AWS_REGION, AWS_USER_POOL_ID]):
