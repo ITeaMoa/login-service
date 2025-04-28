@@ -46,4 +46,4 @@ spec:
             service:
               name: login-service
               port:
-                number: 80
+                number: 31939
