@@ -10,5 +10,5 @@ spec:
     - protocol: TCP
       port: 80              # LoadBalancer listens on port 8080 for loginpage
       containerPort: 8080   # Container port
-      targetPort: 30081
+      nodePort: 30081
   type: NodePort
