@@ -27,23 +27,23 @@
 #               number: 80
 
 
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: login-ingress
-#   namespace: login-namespace
-#   annotations:
-#     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-# spec:
-#   ingressClassName: nginx 
-#   rules:
-#     - host: api-iteamoa.brynnpark.cloud
-#       http:
-#         paths:
-#         - path: /login
-#           pathType: Prefix
-#           backend:
-#             service:
-#               name: login-service
-#               port:
-#                 number: 31939
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: login-ingress
+  namespace: login-namespace
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  ingressClassName: nginx 
+  rules:
+    - host: api-iteamoa.brynnpark.cloud
+      http:
+        paths:
+        - path: /login
+          pathType: Prefix
+          backend:
+            service:
+              name: login-service
+              port:
+                number: 80
