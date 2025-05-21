@@ -20,12 +20,23 @@ AWS_CLIENT_ID = os.environ["AWS_CLIENT_ID"]
 AWS_CLIENT_SECRET = os.environ["AWS_CLIENT_SECRET"]
 AWS_REGION = os.environ["AWS_DEFAULT_REGION"]
 AWS_USER_POOL_ID = os.environ["AWS_USER_POOL_ID"]
+AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
+AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
 
 
 # Validation
-if not all([AWS_CLIENT_ID, AWS_CLIENT_SECRET, AWS_REGION, AWS_USER_POOL_ID]):
-    print(AWS_REGION)
+# Validation
+if not all([AWS_CLIENT_ID, AWS_CLIENT_SECRET, AWS_REGION, AWS_USER_POOL_ID, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY]):
     raise ValueError("One or more required environment variables are missing")
+
+# Create Cognito client with credentials
+def get_cognito_client():
+    return boto3.client(
+        'cognito-idp',
+        region_name=AWS_REGION,
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+    )
 
 # cb_client = boto3.client('codebuild', region_name=AWS_REGION)
 # response = cb_client.start_build(
@@ -86,7 +97,7 @@ def test_return(request):  # test
 
 @csrf_exempt
 def email_verification_view(request):  # verify/email
-    client = boto3.client('cognito-idp', region_name=AWS_REGION)
+    client = get_cognito_client()
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -138,7 +149,7 @@ def resend_confirmation_view(request):  # verify/resend
             if not email:
                 return JsonResponse({'error': 'Email is required.'}, status=400)
             
-            client = boto3.client('cognito-idp', region_name=AWS_REGION)
+            client = get_cognito_client()
             secret_hash = calculate_secret_hash(AWS_CLIENT_ID, AWS_CLIENT_SECRET, email)
             
             # Resend the confirmation code
@@ -165,7 +176,7 @@ def confirm_email_view(request):  # confirm/email
             email = data['email']
             verification_code = data['verification_code']
             
-            client = boto3.client('cognito-idp', region_name=AWS_REGION)
+            client = get_cognito_client()
             secret_hash = calculate_secret_hash(AWS_CLIENT_ID, AWS_CLIENT_SECRET, email)
 
             response = client.confirm_sign_up(
@@ -242,7 +253,7 @@ def complete_signup_view(request):  # confirm/signup
             if not email or not password or not nickname:
                 return JsonResponse({'error': 'Email, password, and nickname are required.'}, status=400)
 
-            client = boto3.client('cognito-idp', region_name=AWS_REGION)
+            client = get_cognito_client()
             # Update the user's attributes
             try:
                 client.admin_update_user_attributes(
@@ -266,7 +277,7 @@ def complete_signup_view(request):  # confirm/signup
             )
 
             # Retrieve Cognito user ID (sub)
-            client = boto3.client('cognito-idp', region_name=AWS_REGION)
+            client = get_cognito_client()
             user_response = client.admin_get_user(
                 UserPoolId=AWS_USER_POOL_ID,
                 Username=email
@@ -318,7 +329,7 @@ def signin_view(request):   # confirm/signin
         # 지금은 secret이 필수로 포함되어서 모든 cognito와 소통하는 항목에는 포함해줘야함 (다른 함수도 다 포함되어 있음)
         # 얘는 sub 하면 오류나고 email 해야함 (이유가 뭐지 .. )
         
-        client = boto3.client('cognito-idp', region_name=os.getenv('AWS_REGION'))
+        client = get_cognito_client()
         
         try:
             response = client.initiate_auth(
@@ -370,7 +381,7 @@ def refresh_token_view(request):    # verify/refresh
         refresh_token = data.get('refresh_token')
         print(f"Refresh Token: {refresh_token}")
 
-        client = boto3.client('cognito-idp', region_name=AWS_REGION)
+        client = get_cognito_client()
         
         user_response = client.admin_get_user(
             UserPoolId=AWS_USER_POOL_ID,
