@@ -33,6 +33,7 @@ metadata:
   labels:
     svc: login
 spec:
+  revisionHistoryLimit: 2 # Keep the last two revisions
   replicas: 1
   selector:
     matchLabels:
