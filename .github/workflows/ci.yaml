@@ -43,7 +43,7 @@ jobs:
       
       - name: Update deployment.yaml with new image tag
         run: |
-          yq e -i '.spec.template.spec.containers[0].image = "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:'"${SHORT_SHA}"'"' k8s/login/deployment.yaml
+          yq e -i '.spec.template.spec.containers[0].image = "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:'"${SHORT_SHA}"'"' k8s/login-service-deployment.yaml
         
       - name: Commit and push updated deployment
         run: |
