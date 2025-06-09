@@ -45,7 +45,7 @@ spec:
     spec:
       containers:
         - name: login-service
-          image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:347d21f
+          image: 970547342771.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:1cf82db
           ports:
             - containerPort: 80
       imagePullSecrets:
