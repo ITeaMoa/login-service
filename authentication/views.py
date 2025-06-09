@@ -94,7 +94,7 @@ def test_return(request):  # test
         print("Test endpoint hit")
         return JsonResponse({'message': 'Hello, this is a test response!'}, status=200)
 
-
+ 
 @csrf_exempt
 def email_verification_view(request):  # verify/email
     client = get_cognito_client()
@@ -209,7 +209,7 @@ def hash_password(password):
 @csrf_exempt
 def nickname_verification_view(request):  # verify/nickname
     print(f"Request method: {request.method}")
-    if request.method == 'POST':
+    if request.method == 'GET':
         try:
             data = json.loads(request.body)
             print(f"Request body: {data}")
