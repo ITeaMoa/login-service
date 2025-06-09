@@ -305,7 +305,8 @@ def complete_signup_view(request):  # confirm/signup
                         'nickname': nickname,
                         'entityType': 'USER',
                         'timestamp': timestamp,
-                        'userStatus': True
+                        'userStatus': True,
+                        'messageId': {}
                     }
                 )
             except Exception as e:
