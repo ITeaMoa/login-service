@@ -209,7 +209,7 @@ def hash_password(password):
 @csrf_exempt
 def nickname_verification_view(request):  # verify/nickname
     print(f"Request method: {request.method}")
-    if request.method == 'GET':
+    if request.method == 'POST':
         try:
             data = json.loads(request.body)
             print(f"Request body: {data}")
