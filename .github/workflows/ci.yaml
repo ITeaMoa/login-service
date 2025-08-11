@@ -29,8 +29,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.NCP_ACCESS_KEY }}      # add to repo secrets
-          password: ${{ secrets.NCP_SECRET_KEY }}      # add to repo secrets
+          username: ${{ secrets.NCLOUD_ACCESS_KEY }}      # add to repo secrets
+          password: ${{ secrets.NCLOUD_SECRET_KEY }}      # add to repo secrets
 
       # Keep build args if your app still needs them (e.g., Cognito)
       - name: Build & Push (linux/amd64)
