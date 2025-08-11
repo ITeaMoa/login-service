@@ -1,12 +1,15 @@
-name: CI - Login Service
+name: CI - Login Service (Ncloud)
 
 on:
   push:
-    branches:
-      - main  # Trigger workflow on push to the main branch
+    branches: [ main ]
 
 permissions:
   contents: write
+
+env:
+  REGISTRY: iteamoa.kr.ncr.ntruss.com   # <-- your NCR registry host
+  IMAGE: login                                 # <-- image repo/name in NCR
 
 jobs:
   build-and-push:
@@ -18,40 +21,106 @@ jobs:
 
       - name: Set short SHA
         run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
-      
-      - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Ncloud Container Registry
+        uses: docker/login-action@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2  # Your AWS region
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.NCP_ACCESS_KEY }}      # add to repo secrets
+          password: ${{ secrets.NCP_SECRET_KEY }}      # add to repo secrets
 
-      - name: Log in to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v1
+      # Keep build args if your app still needs them (e.g., Cognito)
+      - name: Build & Push (linux/amd64)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ env.SHORT_SHA }}
+          build-args: |
+            AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}
+            AWS_CLIENT_ID=${{ secrets.AWS_CLIENT_ID }}
+            AWS_CLIENT_SECRET=${{ secrets.AWS_CLIENT_SECRET }}
+            AWS_USER_POOL_ID=${{ secrets.AWS_USER_POOL_ID }}
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Build Docker image with SHA tag
-        run: |
-          docker build \
-            --build-arg AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }} \
-            --build-arg AWS_CLIENT_ID=${{ secrets.AWS_CLIENT_ID }} \
-            --build-arg AWS_CLIENT_SECRET=${{ secrets.AWS_CLIENT_SECRET }} \
-            --build-arg AWS_USER_POOL_ID=${{ secrets.AWS_USER_POOL_ID }} \
-            --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-            --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-            -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:${SHORT_SHA} .
-      
-      - name: Push Docker image to ECR
-        run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:${SHORT_SHA}
-      
+      - name: Install yq
+        uses: mikefarah/yq@v4.44.3
+
       - name: Update deployment.yaml with new image tag
         run: |
-          yq e -i '.spec.template.spec.containers[0].image = "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:'"${SHORT_SHA}"'"' k8s/login-service-deployment.yaml
-        
+          yq -i '.spec.template.spec.containers[0].image = "'"${REGISTRY}/${IMAGE}:${SHORT_SHA}"'"' k8s/deployment.yaml
+
       - name: Commit and push updated deployment
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-          git add k8s/login-service-deployment.yaml
+          git add k8s/deployment.yaml
           git commit -m "Update login image to ${SHORT_SHA}" || echo "No changes to commit"
           git push
+
+
+
+
+
+# name: CI - Login Service
+
+# on:
+#   push:
+#     branches:
+#       - main  # Trigger workflow on push to the main branch
+
+# permissions:
+#   contents: write
+
+# jobs:
+#   build-and-push:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       - name: Set short SHA
+#         run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+      
+#       - name: Set up AWS CLI
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ap-northeast-2  # Your AWS region
+
+#       - name: Log in to Amazon ECR
+#         uses: aws-actions/amazon-ecr-login@v1
+
+#       - name: Build Docker image with SHA tag
+#         run: |
+#           docker build \
+#             --build-arg AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }} \
+#             --build-arg AWS_CLIENT_ID=${{ secrets.AWS_CLIENT_ID }} \
+#             --build-arg AWS_CLIENT_SECRET=${{ secrets.AWS_CLIENT_SECRET }} \
+#             --build-arg AWS_USER_POOL_ID=${{ secrets.AWS_USER_POOL_ID }} \
+#             --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+#             --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+#             -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:${SHORT_SHA} .
+      
+#       - name: Push Docker image to ECR
+#         run: |
+#           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:${SHORT_SHA}
+      
+#       - name: Update deployment.yaml with new image tag
+#         run: |
+#           yq e -i '.spec.template.spec.containers[0].image = "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/iteamoa/login:'"${SHORT_SHA}"'"' k8s/login-service-deployment.yaml
+        
+#       - name: Commit and push updated deployment
+#         run: |
+#           git config --global user.email "github-actions@github.com"
+#           git config --global user.name "GitHub Actions"
+#           git add k8s/login-service-deployment.yaml
+#           git commit -m "Update login image to ${SHORT_SHA}" || echo "No changes to commit"
+#           git push

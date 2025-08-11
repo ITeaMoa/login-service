@@ -2,13 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: login-service
-  namespace: login-namespace
+  namespace: login
 spec:
   selector:
     svc: login
   ports:
     - protocol: TCP
-      port: 80              # LoadBalancer listens on port 8080 for loginpage
+      name: http
+      port: 80            # LoadBalancer listens on port 8080 for loginpage
       containerPort: 8080   # Container port
-      nodePort: 30081
-  type: NodePort
+  type: ClusterIP
