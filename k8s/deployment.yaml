@@ -44,9 +44,9 @@ spec:
         svc: login
     spec:
       imagePullSecrets:
-        - name: ncr-regcred          # <-- goes here (pod level)
+        - name: ncr-regcred # <-- goes here (pod level)
       containers:
         - name: login-service
-          image: iteamoa-login.kr.ncr.ntruss.com/login:1.0
+          image: iteamoa.kr.ncr.ntruss.com/login:bc1c3ce
           ports:
             - containerPort: 80
