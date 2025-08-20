@@ -47,6 +47,6 @@ spec:
         - name: ncr-regcred # <-- goes here (pod level)
       containers:
         - name: login-service
-          image: iteamoa.kr.ncr.ntruss.com/login:bc1c3ce
+          image: iteamoa.kr.ncr.ntruss.com/login:c2423f7
           ports:
             - containerPort: 80
