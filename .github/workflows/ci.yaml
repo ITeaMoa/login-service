@@ -8,8 +8,8 @@ permissions:
   contents: write
 
 env:
-  REGISTRY: iteamoa.kr.ncr.ntruss.com   # <-- your NCR registry host
-  IMAGE: login                                 # <-- image repo/name in NCR
+  REGISTRY: iteamoa.kr.ncr.ntruss.com   # <-- NCR registry host
+  IMAGE: login                          # <-- image repo/name in NCR
 
 jobs:
   build-and-push:
